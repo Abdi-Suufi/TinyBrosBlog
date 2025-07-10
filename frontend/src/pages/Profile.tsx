@@ -89,6 +89,17 @@ const Profile: React.FC = () => {
 
   const isFollowing = user && currentUser ? user.followers.includes(currentUser.id) : false;
 
+  // Helper function to safely render user IDs
+  const renderUserId = (userId: any) => {
+    if (typeof userId === 'string') {
+      return userId;
+    }
+    if (typeof userId === 'object' && userId._id) {
+      return userId._id;
+    }
+    return 'Unknown User';
+  };
+
   if (loading) {
     return (
       <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
@@ -227,15 +238,15 @@ const Profile: React.FC = () => {
                     <p className="text-muted">No followers yet.</p>
                   ) : (
                     <div>
-                      {user.followers.map((followerId) => (
-                        <div key={followerId} className="d-flex align-items-center mb-2">
+                      {user.followers.map((followerId, index) => (
+                        <div key={index} className="d-flex align-items-center mb-2">
                           <img
                             src="https://via.placeholder.com/40"
                             alt="Follower"
                             className="rounded-circle me-2"
                             style={{ width: '40px', height: '40px' }}
                           />
-                          <span>Follower {followerId}</span>
+                          <span>User ID: {renderUserId(followerId)}</span>
                         </div>
                       ))}
                     </div>
@@ -251,15 +262,15 @@ const Profile: React.FC = () => {
                     <p className="text-muted">Not following anyone yet.</p>
                   ) : (
                     <div>
-                      {user.following.map((followingId) => (
-                        <div key={followingId} className="d-flex align-items-center mb-2">
+                      {user.following.map((followingId, index) => (
+                        <div key={index} className="d-flex align-items-center mb-2">
                           <img
                             src="https://via.placeholder.com/40"
                             alt="Following"
                             className="rounded-circle me-2"
                             style={{ width: '40px', height: '40px' }}
                           />
-                          <span>Following {followingId}</span>
+                          <span>User ID: {renderUserId(followingId)}</span>
                         </div>
                       ))}
                     </div>
