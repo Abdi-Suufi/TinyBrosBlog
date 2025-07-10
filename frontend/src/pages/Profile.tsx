@@ -28,12 +28,23 @@ const Profile: React.FC = () => {
   const isOwnProfile = !id || currentUser?.id === id;
 
   useEffect(() => {
+    console.log('Profile useEffect - id:', id, 'currentUser:', currentUser, 'userId:', userId);
+    
+    // If we're on /profile (no ID) and currentUser is not loaded yet, wait
+    if (!id && !currentUser) {
+      console.log('Waiting for auth to load...');
+      return; // Don't redirect yet, wait for auth to load
+    }
+    
     if (!userId) {
+      console.log('No userId, redirecting to login');
       navigate('/login');
       return;
     }
+    
+    console.log('Fetching user profile for userId:', userId);
     fetchUserProfile();
-  }, [userId]);
+  }, [userId, currentUser, id]);
 
   const fetchUserProfile = async () => {
     try {
@@ -150,7 +161,8 @@ const Profile: React.FC = () => {
 
   const isFollowing = user && currentUser ? user.followers.includes(currentUser.id) : false;
 
-  if (loading) {
+  // Show loading spinner while auth is loading or profile is loading
+  if (loading || (!currentUser && !id)) {
     return (
       <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
         <Spinner animation="border" role="status">
