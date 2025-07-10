@@ -1,0 +1,82 @@
+const mongoose = require('mongoose');
+
+const postSchema = new mongoose.Schema({
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 200
+  },
+  body: {
+    type: String,
+    required: true,
+    maxlength: 5000
+  },
+  image: {
+    type: String,
+    required: true
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
+  restaurantName: {
+    type: String,
+    trim: true,
+    maxlength: 100
+  },
+  location: {
+    type: String,
+    trim: true,
+    maxlength: 200
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  comments: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    text: {
+      type: String,
+      required: true,
+      maxlength: 1000
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  tags: [{
+    type: String,
+    trim: true,
+    maxlength: 20
+  }]
+}, {
+  timestamps: true
+});
+
+// Virtual for like count
+postSchema.virtual('likeCount').get(function() {
+  return this.likes.length;
+});
+
+// Virtual for comment count
+postSchema.virtual('commentCount').get(function() {
+  return this.comments.length;
+});
+
+// Ensure virtuals are serialized
+postSchema.set('toJSON', { virtuals: true });
+
+module.exports = mongoose.model('Post', postSchema); 
