@@ -19,6 +19,10 @@ const Profile: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const [activeTab, setActiveTab] = useState('posts');
+  const [followersData, setFollowersData] = useState<User[]>([]);
+  const [followingData, setFollowingData] = useState<User[]>([]);
+  const [loadingFollowers, setLoadingFollowers] = useState(false);
+  const [loadingFollowing, setLoadingFollowing] = useState(false);
 
   const userId = id || currentUser?.id;
   const isOwnProfile = !id || currentUser?.id === id;
@@ -57,6 +61,54 @@ const Profile: React.FC = () => {
     }
   };
 
+  const fetchFollowersData = async () => {
+    if (!user || user.followers.length === 0) return;
+    
+    try {
+      setLoadingFollowers(true);
+      const followers = await Promise.all(
+        user.followers.map(async (followerId: any) => {
+          try {
+            const userId = typeof followerId === 'string' ? followerId : followerId._id;
+            return await userService.getUserProfile(userId);
+          } catch (err) {
+            console.error('Failed to fetch follower:', err);
+            return null;
+          }
+        })
+      );
+      setFollowersData(followers.filter(Boolean) as User[]);
+    } catch (err) {
+      console.error('Failed to fetch followers data:', err);
+    } finally {
+      setLoadingFollowers(false);
+    }
+  };
+
+  const fetchFollowingData = async () => {
+    if (!user || user.following.length === 0) return;
+    
+    try {
+      setLoadingFollowing(true);
+      const following = await Promise.all(
+        user.following.map(async (followingId: any) => {
+          try {
+            const userId = typeof followingId === 'string' ? followingId : followingId._id;
+            return await userService.getUserProfile(userId);
+          } catch (err) {
+            console.error('Failed to fetch following user:', err);
+            return null;
+          }
+        })
+      );
+      setFollowingData(following.filter(Boolean) as User[]);
+    } catch (err) {
+      console.error('Failed to fetch following data:', err);
+    } finally {
+      setLoadingFollowing(false);
+    }
+  };
+
   const handleFollow = async () => {
     if (!user || !currentUser) return;
 
@@ -87,18 +139,16 @@ const Profile: React.FC = () => {
     setTotalPosts(prev => prev - 1);
   };
 
-  const isFollowing = user && currentUser ? user.followers.includes(currentUser.id) : false;
-
-  // Helper function to safely render user IDs
-  const renderUserId = (userId: any) => {
-    if (typeof userId === 'string') {
-      return userId;
+  const handleTabSelect = (tabKey: string | null) => {
+    if (tabKey === 'followers' && followersData.length === 0) {
+      fetchFollowersData();
+    } else if (tabKey === 'following' && followingData.length === 0) {
+      fetchFollowingData();
     }
-    if (typeof userId === 'object' && userId._id) {
-      return userId._id;
-    }
-    return 'Unknown User';
+    setActiveTab(tabKey || 'posts');
   };
+
+  const isFollowing = user && currentUser ? user.followers.includes(currentUser.id) : false;
 
   if (loading) {
     return (
@@ -184,7 +234,7 @@ const Profile: React.FC = () => {
           {/* Tabs */}
           <Tabs
             activeKey={activeTab}
-            onSelect={(k) => setActiveTab(k || 'posts')}
+            onSelect={handleTabSelect}
             className="mb-4"
           >
             <Tab eventKey="posts" title={`Posts (${totalPosts})`}>
@@ -236,17 +286,32 @@ const Profile: React.FC = () => {
                 <Card.Body>
                   {user.followers.length === 0 ? (
                     <p className="text-muted">No followers yet.</p>
+                  ) : loadingFollowers ? (
+                    <div className="text-center">
+                      <Spinner animation="border" size="sm" />
+                      <span className="ms-2">Loading followers...</span>
+                    </div>
                   ) : (
                     <div>
-                      {user.followers.map((followerId, index) => (
-                        <div key={index} className="d-flex align-items-center mb-2">
+                      {followersData.map((follower) => (
+                        <div key={follower._id} className="d-flex align-items-center mb-3 p-2 border rounded">
                           <img
-                            src="https://via.placeholder.com/40"
-                            alt="Follower"
-                            className="rounded-circle me-2"
-                            style={{ width: '40px', height: '40px' }}
+                            src={follower.profilePicture ? `http://localhost:5000${follower.profilePicture}` : 'https://via.placeholder.com/40'}
+                            alt={follower.displayName}
+                            className="rounded-circle me-3"
+                            style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                           />
-                          <span>User ID: {renderUserId(followerId)}</span>
+                          <div className="flex-grow-1">
+                            <div className="fw-bold">{follower.displayName}</div>
+                            <div className="text-muted small">@{follower.username}</div>
+                          </div>
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => navigate(`/profile/${follower._id}`)}
+                          >
+                            View Profile
+                          </Button>
                         </div>
                       ))}
                     </div>
@@ -260,17 +325,32 @@ const Profile: React.FC = () => {
                 <Card.Body>
                   {user.following.length === 0 ? (
                     <p className="text-muted">Not following anyone yet.</p>
+                  ) : loadingFollowing ? (
+                    <div className="text-center">
+                      <Spinner animation="border" size="sm" />
+                      <span className="ms-2">Loading following...</span>
+                    </div>
                   ) : (
                     <div>
-                      {user.following.map((followingId, index) => (
-                        <div key={index} className="d-flex align-items-center mb-2">
+                      {followingData.map((followingUser) => (
+                        <div key={followingUser._id} className="d-flex align-items-center mb-3 p-2 border rounded">
                           <img
-                            src="https://via.placeholder.com/40"
-                            alt="Following"
-                            className="rounded-circle me-2"
-                            style={{ width: '40px', height: '40px' }}
+                            src={followingUser.profilePicture ? `http://localhost:5000${followingUser.profilePicture}` : 'https://via.placeholder.com/40'}
+                            alt={followingUser.displayName}
+                            className="rounded-circle me-3"
+                            style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                           />
-                          <span>User ID: {renderUserId(followingId)}</span>
+                          <div className="flex-grow-1">
+                            <div className="fw-bold">{followingUser.displayName}</div>
+                            <div className="text-muted small">@{followingUser.username}</div>
+                          </div>
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => navigate(`/profile/${followingUser._id}`)}
+                          >
+                            View Profile
+                          </Button>
                         </div>
                       ))}
                     </div>
