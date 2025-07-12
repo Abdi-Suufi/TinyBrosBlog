@@ -88,7 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
       <div className="d-flex justify-content-between align-items-center p-2 border-bottom" style={{ borderColor: theme === 'dark' ? 'var(--border)' : 'var(--border)' }}>
         <div className="d-flex align-items-center">
           <img
-            src={post.author.profilePicture || 'https://via.placeholder.com/32'}
+            src={post.author.profilePicture ? `http://localhost:5000${post.author.profilePicture}` : 'https://via.placeholder.com/32'}
             alt={post.author.displayName}
             className="rounded-circle me-2"
             style={{ width: '32px', height: '32px', objectFit: 'cover' }}
@@ -212,7 +212,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
               {post.comments.map((comment) => (
                 <div key={comment._id} className="d-flex align-items-start mb-2">
                   <img
-                    src={comment.user.profilePicture || 'https://via.placeholder.com/24'}
+                    src={comment.user.profilePicture ? `http://localhost:5000${comment.user.profilePicture}` : 'https://via.placeholder.com/24'}
                     alt={comment.user.displayName}
                     className="rounded-circle me-2"
                     style={{ width: '24px', height: '24px', objectFit: 'cover' }}
