@@ -80,7 +80,7 @@ const PostDetail: React.FC = () => {
   };
 
   const handleDeletePost = async () => {
-    if (!post || !confirm('Are you sure you want to delete this post?')) return;
+    if (!post || !window.confirm('Are you sure you want to delete this post?')) return;
     
     try {
       await postService.deletePost(post._id);
