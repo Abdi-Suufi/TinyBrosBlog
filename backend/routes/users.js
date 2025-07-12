@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { getFileUrl } = require('../config/s3');
 
 const router = express.Router();
 
@@ -132,7 +133,7 @@ router.put('/profile', auth, upload.single('profilePicture'), async (req, res) =
     if (displayName) updateFields.displayName = displayName;
     if (bio !== undefined) updateFields.bio = bio;
     if (req.file) {
-      updateFields.profilePicture = `/uploads/${req.file.filename}`;
+      updateFields.profilePicture = req.file.key; // S3 file key
     }
 
     const user = await User.findByIdAndUpdate(
@@ -141,7 +142,13 @@ router.put('/profile', auth, upload.single('profilePicture'), async (req, res) =
       { new: true }
     ).select('-password');
 
-    res.json(user);
+    // Convert S3 key to URL for response
+    const userResponse = user.toObject();
+    if (userResponse.profilePicture) {
+      userResponse.profilePicture = getFileUrl(userResponse.profilePicture);
+    }
+
+    res.json(userResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

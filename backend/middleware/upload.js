@@ -1,33 +1,7 @@
-const multer = require('multer');
-const path = require('path');
+const { upload: s3Upload, getFileUrl } = require('../config/s3');
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
+// Export the S3 upload middleware
+module.exports = s3Upload;
 
-// File filter
-const fileFilter = (req, file, cb) => {
-  // Accept images only
-  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-    req.fileValidationError = 'Only image files are allowed!';
-    return cb(new Error('Only image files are allowed!'), false);
-  }
-  cb(null, true);
-};
-
-// Configure upload
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  },
-  fileFilter: fileFilter
-});
-
-module.exports = upload; 
+// Export the getFileUrl function for use in routes
+module.exports.getFileUrl = getFileUrl; 

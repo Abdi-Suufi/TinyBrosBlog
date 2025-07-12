@@ -2,6 +2,7 @@ const express = require('express');
 const Post = require('../models/Post');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { getFileUrl } = require('../config/s3');
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
       author: req.user._id,
       title,
       body,
-      image: `/uploads/${req.file.filename}`,
+      image: req.file.key, // S3 file key
       rating: parseInt(rating),
       restaurantName,
       location,
@@ -30,7 +31,14 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
     // Populate author info
     await post.populate('author', 'username displayName profilePicture');
     
-    res.status(201).json(post);
+    // Convert S3 keys to URLs for response
+    const postResponse = post.toObject();
+    postResponse.image = getFileUrl(post.image);
+    if (postResponse.author.profilePicture) {
+      postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
+    }
+    
+    res.status(201).json(postResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -53,8 +61,27 @@ router.get('/', async (req, res) => {
 
     const total = await Post.countDocuments();
 
+    // Convert S3 keys to URLs for all posts
+    const postsWithUrls = posts.map(post => {
+      const postObj = post.toObject();
+      postObj.image = getFileUrl(postObj.image);
+      if (postObj.author.profilePicture) {
+        postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
+      }
+      if (postObj.comments) {
+        postObj.comments = postObj.comments.map(comment => ({
+          ...comment,
+          user: {
+            ...comment.user,
+            profilePicture: comment.user.profilePicture ? getFileUrl(comment.user.profilePicture) : null
+          }
+        }));
+      }
+      return postObj;
+    });
+
     res.json({
-      posts,
+      posts: postsWithUrls,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
       totalPosts: total
@@ -73,7 +100,26 @@ router.get('/user/:userId', async (req, res) => {
       .populate('comments.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 });
 
-    res.json(posts);
+    // Convert S3 keys to URLs for all posts
+    const postsWithUrls = posts.map(post => {
+      const postObj = post.toObject();
+      postObj.image = getFileUrl(postObj.image);
+      if (postObj.author.profilePicture) {
+        postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
+      }
+      if (postObj.comments) {
+        postObj.comments = postObj.comments.map(comment => ({
+          ...comment,
+          user: {
+            ...comment.user,
+            profilePicture: comment.user.profilePicture ? getFileUrl(comment.user.profilePicture) : null
+          }
+        }));
+      }
+      return postObj;
+    });
+
+    res.json(postsWithUrls);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -91,7 +137,23 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    res.json(post);
+    // Convert S3 keys to URLs
+    const postResponse = post.toObject();
+    postResponse.image = getFileUrl(postResponse.image);
+    if (postResponse.author.profilePicture) {
+      postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
+    }
+    if (postResponse.comments) {
+      postResponse.comments = postResponse.comments.map(comment => ({
+        ...comment,
+        user: {
+          ...comment.user,
+          profilePicture: comment.user.profilePicture ? getFileUrl(comment.user.profilePicture) : null
+        }
+      }));
+    }
+
+    res.json(postResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

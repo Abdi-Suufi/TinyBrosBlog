@@ -92,6 +92,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
             alt={post.author.displayName}
             className="rounded-circle me-2"
             style={{ width: '32px', height: '32px', objectFit: 'cover' }}
+            onError={(e) => {
+              console.error('Profile picture failed to load:', post.author.profilePicture, 'Processed URL:', post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : '');
+            }}
+            onLoad={() => {
+              console.log('Profile picture loaded successfully:', post.author.profilePicture, 'Processed URL:', post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : '');
+            }}
           />
           <div>
                     <Link to={`/profile/${post.author._id}`} className="text-decoration-none">
@@ -115,6 +121,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
         alt={post.title}
         className="w-100"
         style={{ maxHeight: '400px', objectFit: 'cover' }}
+        onError={(e) => {
+          console.error('Image failed to load:', post.image, 'Processed URL:', getBackendAssetUrl(post.image));
+          e.currentTarget.style.display = 'none';
+        }}
+        onLoad={() => {
+          console.log('Image loaded successfully:', post.image, 'Processed URL:', getBackendAssetUrl(post.image));
+        }}
       />
 
       {/* Content */}
