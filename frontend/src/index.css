@@ -136,6 +136,27 @@ p, span, div, a {
   color: var(--text-primary) !important;
 }
 
+/* Border overrides for dark mode */
+[data-theme="dark"] .border {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .border-top {
+  border-top-color: var(--border) !important;
+}
+
+[data-theme="dark"] .border-bottom {
+  border-bottom-color: var(--border) !important;
+}
+
+[data-theme="dark"] .border-start {
+  border-left-color: var(--border) !important;
+}
+
+[data-theme="dark"] .border-end {
+  border-right-color: var(--border) !important;
+}
+
 /* Form select overrides for dark mode */
 [data-theme="dark"] .form-select {
   background-color: var(--bg-tertiary) !important;

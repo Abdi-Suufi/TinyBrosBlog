@@ -81,11 +81,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
   return (
     <div className={`border rounded mb-3 fade-in ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`} style={{ 
       maxWidth: '100%',
-      color: theme === 'dark' ? 'var(--text-primary)' : 'var(--text-primary)',
-      borderColor: theme === 'dark' ? 'var(--border)' : 'var(--border)'
+      color: theme === 'dark' ? 'var(--text-primary)' : 'var(--text-primary)'
     }}>
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center p-2 border-bottom" style={{ borderColor: theme === 'dark' ? 'var(--border)' : 'var(--border)' }}>
+      <div className="d-flex justify-content-between align-items-center p-2 border-bottom">
         <div className="d-flex align-items-center">
           <img
             src={post.author.profilePicture ? `http://localhost:5000${post.author.profilePicture}` : 'https://via.placeholder.com/32'}
@@ -182,7 +181,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
 
         {/* Comments */}
         {showComments && (
-          <div className="border-top pt-2" style={{ borderColor: theme === 'dark' ? 'var(--border)' : 'var(--border)' }}>
+          <div className="border-top pt-2">
             {user && (
               <Form onSubmit={handleComment} className="mb-2">
                 <div className="d-flex">
@@ -209,39 +208,52 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
             )}
 
             <div>
-              {post.comments.map((comment) => (
-                <div key={comment._id} className="d-flex align-items-start mb-2">
-                  <img
-                    src={comment.user.profilePicture ? `http://localhost:5000${comment.user.profilePicture}` : 'https://via.placeholder.com/24'}
-                    alt={comment.user.displayName}
-                    className="rounded-circle me-2"
-                    style={{ width: '24px', height: '24px', objectFit: 'cover' }}
-                  />
-                  <div className="flex-grow-1">
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div>
-                        <Link to={`/profile/${comment.user._id}`} className="text-decoration-none">
-                          <span className={`fw-bold small ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>{comment.user.displayName}</span>
-                        </Link>
-                        <div className={`small ${theme === 'dark' ? 'text-light' : 'text-dark'}`}>{comment.text}</div>
-                        <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`} style={{ fontSize: '0.7rem' }}>
-                          {new Date(comment.createdAt).toLocaleDateString()}
+              {post.comments.map((comment) => {
+                const profilePictureUrl = comment.user.profilePicture 
+                  ? `http://localhost:5000${comment.user.profilePicture}`
+                  : 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
+                
+                return (
+                  <div key={comment._id} className="d-flex align-items-start mb-2">
+                    <img
+                      src={profilePictureUrl}
+                      alt={comment.user.displayName || 'User'}
+                      className="rounded-circle me-2"
+                      style={{ width: '24px', height: '24px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        // Fallback to placeholder if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
+                      }}
+                    />
+                    <div className="flex-grow-1">
+                      <div className="d-flex justify-content-between align-items-start">
+                        <div>
+                          <Link to={`/profile/${comment.user._id}`} className="text-decoration-none">
+                            <span className={`fw-bold small ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
+                              {comment.user.displayName || comment.user.username || 'Unknown User'}
+                            </span>
+                          </Link>
+                          <div className={`small ${theme === 'dark' ? 'text-light' : 'text-dark'}`}>{comment.text}</div>
+                          <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`} style={{ fontSize: '0.7rem' }}>
+                            {new Date(comment.createdAt).toLocaleDateString()}
+                          </div>
                         </div>
+                        {(user?.id === comment.user._id || isAuthor) && (
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => handleDeleteComment(comment._id)}
+                            style={{ fontSize: '0.7rem', padding: '0.125rem 0.25rem' }}
+                          >
+                            ×
+                          </Button>
+                        )}
                       </div>
-                      {(user?.id === comment.user._id || isAuthor) && (
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => handleDeleteComment(comment._id)}
-                          style={{ fontSize: '0.7rem', padding: '0.125rem 0.25rem' }}
-                        >
-                          ×
-                        </Button>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

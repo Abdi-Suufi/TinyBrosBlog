@@ -46,6 +46,7 @@ router.get('/', async (req, res) => {
 
     const posts = await Post.find()
       .populate('author', 'username displayName profilePicture')
+      .populate('comments.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -69,6 +70,7 @@ router.get('/user/:userId', async (req, res) => {
   try {
     const posts = await Post.find({ author: req.params.userId })
       .populate('author', 'username displayName profilePicture')
+      .populate('comments.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 });
 
     res.json(posts);
@@ -122,6 +124,7 @@ router.put('/:id', auth, async (req, res) => {
     await post.save();
     
     await post.populate('author', 'username displayName profilePicture');
+    await post.populate('comments.user', 'username displayName profilePicture');
     
     res.json(post);
   } catch (error) {
@@ -172,6 +175,11 @@ router.put('/:id/like', auth, async (req, res) => {
     }
 
     await post.save();
+    
+    // Populate author and comments for the response
+    await post.populate('author', 'username displayName profilePicture');
+    await post.populate('comments.user', 'username displayName profilePicture');
+    
     res.json(post);
   } catch (error) {
     console.error(error);
