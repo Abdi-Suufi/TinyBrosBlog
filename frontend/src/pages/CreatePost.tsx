@@ -44,6 +44,28 @@ const CreatePost: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file (JPEG, PNG, GIF, etc.)');
+        e.target.value = ''; // Clear the input
+        setImage(null);
+        setImagePreview('');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        setError('Image file size must be less than 5MB');
+        e.target.value = ''; // Clear the input
+        setImage(null);
+        setImagePreview('');
+        return;
+      }
+
+      // Clear any previous errors
+      setError('');
+      
       setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -201,12 +223,12 @@ const CreatePost: React.FC = () => {
                     <Form.Label>Food Image *</Form.Label>
                     <Form.Control
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                       onChange={handleImageChange}
                       required
                     />
                     <Form.Text className="text-muted">
-                      Upload a photo of your food
+                      Upload a photo of your food (JPEG, PNG, GIF, WebP - max 5MB)
                     </Form.Text>
                   </Form.Group>
 
