@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { postService } from '../services/postService';
 
 const CreatePost: React.FC = () => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
@@ -124,16 +126,19 @@ const CreatePost: React.FC = () => {
   return (
     <Container className="d-flex justify-content-center" style={{ minHeight: '80vh' }}>
       <div style={{ maxWidth: '800px', width: '100%' }}>
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
+          borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+          backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined
+        }}>
           <Card.Body>
-            <h2 className="text-center mb-4">Create New Post</h2>
+            <h2 className={`text-center mb-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Create New Post</h2>
             {error && <Alert variant="danger">{error}</Alert>}
             
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Col md={8}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Title *</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Title *</Form.Label>
                     <Form.Control
                       type="text"
                       name="title"
@@ -141,11 +146,17 @@ const CreatePost: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="Enter post title..."
                       required
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Description *</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Description *</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={4}
@@ -154,42 +165,66 @@ const CreatePost: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="Share your food experience..."
                       required
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
                   </Form.Group>
 
                   <Row>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Restaurant Name</Form.Label>
+                        <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Restaurant Name</Form.Label>
                         <Form.Control
                           type="text"
                           name="restaurantName"
                           value={formData.restaurantName}
                           onChange={handleInputChange}
                           placeholder="Restaurant name..."
+                          className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                          style={{
+                            backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                            borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                            color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                          }}
                         />
                       </Form.Group>
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Location</Form.Label>
+                        <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Location</Form.Label>
                         <Form.Control
                           type="text"
                           name="location"
                           value={formData.location}
                           onChange={handleInputChange}
                           placeholder="City, Country..."
+                          className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                          style={{
+                            backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                            borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                            color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                          }}
                         />
                       </Form.Group>
                     </Col>
                   </Row>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Rating *</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Rating *</Form.Label>
                     <Form.Select
                       name="rating"
                       value={formData.rating}
                       onChange={handleRatingChange}
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     >
                       <option value={5}>5 Stars - Excellent</option>
                       <option value={4}>4 Stars - Very Good</option>
@@ -199,20 +234,26 @@ const CreatePost: React.FC = () => {
                     </Form.Select>
                     <div className="mt-2">
                       <span className="text-warning fs-5">{renderStars(formData.rating)}</span>
-                      <span className="text-muted ms-2">({formData.rating}/5)</span>
+                      <span className={`${theme === 'dark' ? 'text-light' : 'text-muted'} ms-2`}>({formData.rating}/5)</span>
                     </div>
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Tags</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Tags</Form.Label>
                     <Form.Control
                       type="text"
                       name="tags"
                       value={formData.tags}
                       onChange={handleInputChange}
                       placeholder="pizza, italian, dinner (comma separated)"
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
-                    <Form.Text className="text-muted">
+                    <Form.Text className={theme === 'dark' ? 'text-light' : 'text-muted'}>
                       Add tags to help others find your post
                     </Form.Text>
                   </Form.Group>
@@ -220,14 +261,20 @@ const CreatePost: React.FC = () => {
 
                 <Col md={4}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Food Image *</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Food Image *</Form.Label>
                     <Form.Control
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                       onChange={handleImageChange}
                       required
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
-                    <Form.Text className="text-muted">
+                    <Form.Text className={theme === 'dark' ? 'text-light' : 'text-muted'}>
                       Upload a photo of your food (JPEG, PNG, GIF, WebP - max 5MB)
                     </Form.Text>
                   </Form.Group>

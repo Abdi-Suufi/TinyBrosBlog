@@ -10,6 +10,7 @@ import CreatePost from './pages/CreatePost';
 import Profile from './pages/Profile';
 import PostDetail from './pages/PostDetail';
 import Settings from './pages/Settings';
+import Support from './pages/Support';
 import FollowingSidebar from './components/FollowingSidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -61,6 +62,30 @@ const AppContent: React.FC = () => {
               </>
             )}
           </Nav>
+          
+          <hr className="my-4" />
+          
+          {/* Support Section */}
+          <div className="mb-4">
+            <h6 className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-3 small text-uppercase`}>
+              <i className="bi bi-question-circle me-2"></i>
+              Support
+            </h6>
+            <Nav className="flex-column">
+              <Nav.Link as={Link} to="/support" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
+                <i className="bi bi-headset me-2"></i>
+                Contact Support
+              </Nav.Link>
+              <Nav.Link href="mailto:support@tinybrosblog.com" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
+                <i className="bi bi-envelope me-2"></i>
+                Email Support
+              </Nav.Link>
+              <Nav.Link href="https://github.com/Abdi-Suufi/TinyBrosBlog/issues" target="_blank" rel="noopener noreferrer" className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
+                <i className="bi bi-bug me-2"></i>
+                Report Bug
+              </Nav.Link>
+            </Nav>
+          </div>
           
           <hr className="my-4" />
           
@@ -136,6 +161,7 @@ const AppContent: React.FC = () => {
             <Route path="/post/:id" element={<PostDetail />} />
             <Route path="/create" element={<CreatePost />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/support" element={<Support />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>

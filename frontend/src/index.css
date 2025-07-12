@@ -103,6 +103,58 @@ p, span, div, a {
   color: var(--text-secondary) !important;
 }
 
+/* Bootstrap form control overrides for dark mode */
+[data-theme="dark"] .form-control {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-control:focus {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--accent) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25) !important;
+}
+
+[data-theme="dark"] .form-control:disabled {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Card overrides for dark mode */
+[data-theme="dark"] .card {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .card-body {
+  color: var(--text-primary) !important;
+}
+
+/* Form select overrides for dark mode */
+[data-theme="dark"] .form-select {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-select:focus {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--accent) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25) !important;
+}
+
+[data-theme="dark"] .form-select option {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

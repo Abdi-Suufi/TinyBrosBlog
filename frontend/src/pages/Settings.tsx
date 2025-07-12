@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Card, Container, Alert, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { userService } from '../services/userService';
 
 const Settings: React.FC = () => {
   const { user, logout } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     displayName: '',
@@ -92,9 +94,12 @@ const Settings: React.FC = () => {
   return (
     <Container className="d-flex justify-content-center" style={{ minHeight: '80vh' }}>
       <div style={{ maxWidth: '600px', width: '100%' }}>
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
+          borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+          backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined
+        }}>
           <Card.Body>
-            <h2 className="text-center mb-4">Settings</h2>
+            <h2 className={`text-center mb-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Settings</h2>
             
             {error && <Alert variant="danger">{error}</Alert>}
             {success && <Alert variant="success">{success}</Alert>}
@@ -113,13 +118,19 @@ const Settings: React.FC = () => {
                       style={{ width: '150px', height: '150px', objectFit: 'cover' }}
                     />
                     <Form.Group>
-                      <Form.Label>Profile Picture</Form.Label>
+                      <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Profile Picture</Form.Label>
                       <Form.Control
                         type="file"
                         accept="image/*"
                         onChange={handleProfilePictureChange}
+                        className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                        style={{
+                          backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                          borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                          color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                        }}
                       />
-                      <Form.Text className="text-muted">
+                      <Form.Text className={theme === 'dark' ? 'text-light' : 'text-muted'}>
                         Upload a new profile picture
                       </Form.Text>
                     </Form.Group>
@@ -128,7 +139,7 @@ const Settings: React.FC = () => {
                 
                 <Col md={8}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Display Name</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Display Name</Form.Label>
                     <Form.Control
                       type="text"
                       name="displayName"
@@ -136,11 +147,17 @@ const Settings: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="Enter your display name..."
                       required
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Bio</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Bio</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
@@ -149,32 +166,50 @@ const Settings: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="Tell us about yourself..."
                       maxLength={500}
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
-                    <Form.Text className="text-muted">
+                    <Form.Text className={theme === 'dark' ? 'text-light' : 'text-muted'}>
                       {formData.bio.length}/500 characters
                     </Form.Text>
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Email</Form.Label>
                     <Form.Control
                       type="email"
                       value={user.email}
                       disabled
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
-                    <Form.Text className="text-muted">
+                    <Form.Text className={theme === 'dark' ? 'text-light' : 'text-muted'}>
                       Email cannot be changed
                     </Form.Text>
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Username</Form.Label>
+                    <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Username</Form.Label>
                     <Form.Control
                       type="text"
                       value={user.username}
                       disabled
+                      className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                      style={{
+                        backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                        borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                        color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                      }}
                     />
-                    <Form.Text className="text-muted">
+                    <Form.Text className={theme === 'dark' ? 'text-light' : 'text-muted'}>
                       Username cannot be changed
                     </Form.Text>
                   </Form.Group>

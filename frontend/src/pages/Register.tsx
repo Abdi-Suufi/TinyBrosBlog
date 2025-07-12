@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 const Register: React.FC = () => {
+  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -50,13 +52,16 @@ const Register: React.FC = () => {
   return (
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
       <div style={{ maxWidth: '400px', width: '100%' }}>
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
+          borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+          backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined
+        }}>
           <Card.Body>
-            <h2 className="text-center mb-4">Register</h2>
+            <h2 className={`text-center mb-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Register</h2>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
-                <Form.Label>Username</Form.Label>
+                <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Username</Form.Label>
                 <Form.Control
                   type="text"
                   name="username"
@@ -64,30 +69,48 @@ const Register: React.FC = () => {
                   onChange={handleChange}
                   required
                   minLength={3}
+                  className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                    borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                  }}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Display Name</Form.Label>
+                <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Display Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="displayName"
                   value={formData.displayName}
                   onChange={handleChange}
                   required
+                  className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                    borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                  }}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
+                <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Email</Form.Label>
                 <Form.Control
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                    borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                  }}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
+                <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Password</Form.Label>
                 <Form.Control
                   type="password"
                   name="password"
@@ -95,16 +118,28 @@ const Register: React.FC = () => {
                   onChange={handleChange}
                   required
                   minLength={6}
+                  className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                    borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                  }}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Confirm Password</Form.Label>
+                <Form.Label className={theme === 'dark' ? 'text-white' : 'text-dark'}>Confirm Password</Form.Label>
                 <Form.Control
                   type="password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                  className={theme === 'dark' ? 'bg-dark text-white border-secondary' : ''}
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                    borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                  }}
                 />
               </Form.Group>
               <Button
