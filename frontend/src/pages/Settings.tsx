@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { userService } from '../services/userService';
+import { getBackendAssetUrl } from '../utils/config';
 
 const Settings: React.FC = () => {
   const { user, logout } = useAuth();
@@ -111,7 +112,7 @@ const Settings: React.FC = () => {
                     <img
                       src={
                         profilePicturePreview || 
-                        (user.profilePicture ? `http://localhost:5000${user.profilePicture}` : 'https://via.placeholder.com/150')
+                        (user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://via.placeholder.com/150')
                       }
                       alt="Profile"
                       className="rounded-circle mb-3"

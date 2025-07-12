@@ -5,6 +5,7 @@ import { Post, Comment } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { postService } from '../services/postService';
+import { getBackendAssetUrl } from '../utils/config';
 
 interface PostCardProps {
   post: Post;
@@ -87,7 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
       <div className="d-flex justify-content-between align-items-center p-2 border-bottom">
         <div className="d-flex align-items-center">
           <img
-            src={post.author.profilePicture ? `http://localhost:5000${post.author.profilePicture}` : 'https://via.placeholder.com/32'}
+            src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://via.placeholder.com/32'}
             alt={post.author.displayName}
             className="rounded-circle me-2"
             style={{ width: '32px', height: '32px', objectFit: 'cover' }}
@@ -110,7 +111,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
 
       {/* Image */}
       <img
-        src={`http://localhost:5000${post.image}`}
+        src={getBackendAssetUrl(post.image)}
         alt={post.title}
         className="w-100"
         style={{ maxHeight: '400px', objectFit: 'cover' }}
@@ -210,7 +211,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
             <div>
               {post.comments.map((comment) => {
                 const profilePictureUrl = comment.user.profilePicture 
-                  ? `http://localhost:5000${comment.user.profilePicture}`
+                  ? getBackendAssetUrl(comment.user.profilePicture)
                   : 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
                 
                 return (

@@ -5,6 +5,7 @@ import { User, Post } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { userService } from '../services/userService';
 import PostCard from '../components/PostCard';
+import { getBackendAssetUrl } from '../utils/config';
 
 const Profile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -198,7 +199,7 @@ const Profile: React.FC = () => {
               <Row>
                 <Col md={3} className="text-center">
                   <img
-                    src={user.profilePicture ? `http://localhost:5000${user.profilePicture}` : 'https://via.placeholder.com/150'}
+                    src={user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://via.placeholder.com/150'}
                     alt={user.displayName}
                     className="rounded-circle mb-3"
                     style={{ width: '150px', height: '150px', objectFit: 'cover' }}
@@ -308,7 +309,7 @@ const Profile: React.FC = () => {
                       {followersData.map((follower) => (
                         <div key={follower._id} className="d-flex align-items-center mb-3 p-2 border rounded">
                           <img
-                            src={follower.profilePicture ? `http://localhost:5000${follower.profilePicture}` : 'https://via.placeholder.com/40'}
+                            src={follower.profilePicture ? getBackendAssetUrl(follower.profilePicture) : 'https://via.placeholder.com/40'}
                             alt={follower.displayName}
                             className="rounded-circle me-3"
                             style={{ width: '40px', height: '40px', objectFit: 'cover' }}
@@ -347,7 +348,7 @@ const Profile: React.FC = () => {
                       {followingData.map((followingUser) => (
                         <div key={followingUser._id} className="d-flex align-items-center mb-3 p-2 border rounded">
                           <img
-                            src={followingUser.profilePicture ? `http://localhost:5000${followingUser.profilePicture}` : 'https://via.placeholder.com/40'}
+                            src={followingUser.profilePicture ? getBackendAssetUrl(followingUser.profilePicture) : 'https://via.placeholder.com/40'}
                             alt={followingUser.displayName}
                             className="rounded-circle me-3"
                             style={{ width: '40px', height: '40px', objectFit: 'cover' }}

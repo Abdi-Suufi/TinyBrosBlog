@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { userService } from '../services/userService';
 import { User } from '../types';
+import { getBackendAssetUrl } from '../utils/config';
 
 const FollowingSidebar: React.FC = () => {
   const { user } = useAuth();
@@ -91,7 +92,7 @@ const FollowingSidebar: React.FC = () => {
                     className="text-decoration-none d-flex align-items-center"
                   >
                     <img
-                      src={followedUser.profilePicture ? `http://localhost:5000${followedUser.profilePicture}` : 'https://via.placeholder.com/40'}
+                      src={followedUser.profilePicture ? getBackendAssetUrl(followedUser.profilePicture) : 'https://via.placeholder.com/40'}
                       alt={followedUser.displayName}
                       className="rounded-circle me-3"
                       style={{ width: '40px', height: '40px', objectFit: 'cover' }}

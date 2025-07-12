@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Post, Comment } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { postService } from '../services/postService';
+import { getBackendAssetUrl } from '../utils/config';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -133,7 +134,7 @@ const PostDetail: React.FC = () => {
               <div className="d-flex justify-content-between align-items-start mb-3">
                 <div className="d-flex align-items-center">
                   <img
-                    src={post.author.profilePicture ? `http://localhost:5000${post.author.profilePicture}` : 'https://via.placeholder.com/50'}
+                    src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://via.placeholder.com/50'}
                     alt={post.author.displayName}
                     className="rounded-circle me-3"
                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
@@ -157,7 +158,7 @@ const PostDetail: React.FC = () => {
               <h2>{post.title}</h2>
               
               <img
-                src={`http://localhost:5000${post.image}`}
+                src={getBackendAssetUrl(post.image)}
                 alt={post.title}
                 className="img-fluid rounded mb-3"
                 style={{ maxHeight: '500px', objectFit: 'cover' }}
@@ -245,7 +246,7 @@ const PostDetail: React.FC = () => {
                   {post.comments.map((comment) => (
                     <div key={comment._id} className="d-flex align-items-start mb-3">
                       <img
-                        src={comment.user.profilePicture ? `http://localhost:5000${comment.user.profilePicture}` : 'https://via.placeholder.com/40'}
+                        src={comment.user.profilePicture ? getBackendAssetUrl(comment.user.profilePicture) : 'https://via.placeholder.com/40'}
                         alt={comment.user.displayName}
                         className="rounded-circle me-2"
                         style={{ width: '40px', height: '40px', objectFit: 'cover' }}
