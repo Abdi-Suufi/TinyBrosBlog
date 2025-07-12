@@ -92,7 +92,13 @@ router.post('/login', async (req, res) => {
 // Get current user
 router.get('/me', auth, async (req, res) => {
   try {
-    res.json(req.user);
+    res.json({
+      id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+      displayName: req.user.displayName,
+      profilePicture: req.user.profilePicture
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
