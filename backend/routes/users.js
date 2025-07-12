@@ -6,7 +6,105 @@ const upload = require('../middleware/upload');
 
 const router = express.Router();
 
-// Get user profile
+// Get user's feed (posts from followed users) - must come before /:id routes
+router.get('/feed', auth, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const user = await User.findById(req.user._id);
+    
+    const posts = await Post.find({
+      author: { $in: user.following }
+    })
+      .populate('author', 'username displayName profilePicture')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Post.countDocuments({
+      author: { $in: user.following }
+    });
+
+    res.json({
+      posts,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalPosts: total
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get user's following list - must come before /:id routes
+router.get('/:id/following', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate('following', 'username displayName profilePicture followers')
+      .select('following');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(user.following);
+  } catch (error) {
+    console.error('Error in following endpoint:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get user's posts - must come before /:id routes
+router.get('/:id/posts', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find({ author: req.params.id })
+      .populate('author', 'username displayName profilePicture')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Post.countDocuments({ author: req.params.id });
+
+    res.json({
+      posts,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalPosts: total
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Search users - must come before /:id routes
+router.get('/search/:query', async (req, res) => {
+  try {
+    const query = req.params.query;
+    const users = await User.find({
+      $or: [
+        { username: { $regex: query, $options: 'i' } },
+        { displayName: { $regex: query, $options: 'i' } }
+      ]
+    })
+      .select('username displayName profilePicture')
+      .limit(10);
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get user profile - general route comes last
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
@@ -93,84 +191,6 @@ router.put('/:id/follow', auth, async (req, res) => {
   }
 });
 
-// Get user's posts
-router.get('/:id/posts', async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
 
-    const posts = await Post.find({ author: req.params.id })
-      .populate('author', 'username displayName profilePicture')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await Post.countDocuments({ author: req.params.id });
-
-    res.json({
-      posts,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalPosts: total
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Get user's feed (posts from followed users)
-router.get('/feed', auth, async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    const user = await User.findById(req.user._id);
-    
-    const posts = await Post.find({
-      author: { $in: user.following }
-    })
-      .populate('author', 'username displayName profilePicture')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await Post.countDocuments({
-      author: { $in: user.following }
-    });
-
-    res.json({
-      posts,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalPosts: total
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Search users
-router.get('/search/:query', async (req, res) => {
-  try {
-    const query = req.params.query;
-    const users = await User.find({
-      $or: [
-        { username: { $regex: query, $options: 'i' } },
-        { displayName: { $regex: query, $options: 'i' } }
-      ]
-    })
-      .select('username displayName profilePicture')
-      .limit(10);
-
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
 
 module.exports = router; 

@@ -173,6 +173,17 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+  .following-sidebar {
+    display: none;
+  }
+  
+  .main-content {
+    margin-right: 0 !important;
+    width: calc(100% - 250px) !important;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
@@ -186,6 +197,10 @@
   .main-content {
     margin-left: 0 !important;
     width: 100% !important;
+  }
+  
+  .following-sidebar {
+    display: none;
   }
 }
 

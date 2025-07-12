@@ -44,5 +44,10 @@ export const userService = {
   async searchUsers(query: string): Promise<User[]> {
     const response = await api.get(`/users/search/${query}`);
     return response.data;
+  },
+
+  async getFollowing(userId: string): Promise<User[]> {
+    const response = await api.get(`/users/${userId}/following`);
+    return response.data;
   }
 }; 

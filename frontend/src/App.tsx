@@ -10,6 +10,7 @@ import CreatePost from './pages/CreatePost';
 import Profile from './pages/Profile';
 import PostDetail from './pages/PostDetail';
 import Settings from './pages/Settings';
+import FollowingSidebar from './components/FollowingSidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
@@ -104,7 +105,12 @@ const AppContent: React.FC = () => {
       </div>
       
       {/* Main Content */}
-      <div className="main-content" style={{ marginLeft: '250px', width: 'calc(100% - 250px)', minHeight: '100vh' }}>
+      <div className="main-content" style={{ 
+        marginLeft: '250px', 
+        marginRight: '280px',
+        width: 'calc(100% - 530px)', 
+        minHeight: '100vh' 
+      }}>
         {/* Mobile Overlay */}
         {showSidebar && (
           <div 
@@ -134,6 +140,9 @@ const AppContent: React.FC = () => {
           </Routes>
         </div>
       </div>
+
+      {/* Following Sidebar */}
+      <FollowingSidebar />
     </div>
   );
 };
