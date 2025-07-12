@@ -1,16 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Light theme variables */
+  --bg-primary-light: #ffffff;
+  --bg-secondary-light: #f8f9fa;
+  --bg-tertiary-light: #e9ecef;
+  --text-primary-light: #212529;
+  --text-secondary-light: #6c757d;
+  --text-muted-light: #adb5bd;
+  --border-light: #dee2e6;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --accent-light: #007bff;
+  --success-light: #28a745;
+  --danger-light: #dc3545;
+  --warning-light: #ffc107;
+  
+  /* Dark theme variables */
+  --bg-primary-dark: #1a1a1a;
+  --bg-secondary-dark: #2d2d2d;
+  --bg-tertiary-dark: #404040;
+  --text-primary-dark: #ffffff;
+  --text-secondary-dark: #b0b0b0;
+  --text-muted-dark: #808080;
+  --border-dark: #404040;
+  --shadow-dark: rgba(0, 0, 0, 0.3);
+  --accent-dark: #4dabf7;
+  --success-dark: #51cf66;
+  --danger-dark: #ff6b6b;
+  --warning-dark: #ffd43b;
+}
+
+[data-theme="light"] {
+  --bg-primary: var(--bg-primary-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --bg-tertiary: var(--bg-tertiary-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-muted: var(--text-muted-light);
+  --border: var(--border-light);
+  --shadow: var(--shadow-light);
+  --accent: var(--accent-light);
+  --success: var(--success-light);
+  --danger: var(--danger-light);
+  --warning: var(--warning-light);
+}
+
+[data-theme="dark"] {
+  --bg-primary: var(--bg-primary-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --bg-tertiary: var(--bg-tertiary-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-muted: var(--text-muted-dark);
+  --border: var(--border-dark);
+  --shadow: var(--shadow-dark);
+  --accent: var(--accent-dark);
+  --success: var(--success-dark);
+  --danger: var(--danger-dark);
+  --warning: var(--warning-dark);
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* Dot pattern background wallpaper */
-  background: rgba(29, 31, 32, 0.904)
-    radial-gradient(rgba(255, 255, 255, 0.712) 10%, transparent 1%);
-  background-size: 11px 11px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Global text color overrides for theme switching */
+[data-theme="dark"] .text-dark {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Ensure all text elements use theme colors */
+p, span, div, a {
+  color: inherit;
+}
+
+/* Override Bootstrap text utilities for theme compatibility */
+[data-theme="dark"] .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .text-muted {
+  color: var(--text-secondary) !important;
 }
 
 code {

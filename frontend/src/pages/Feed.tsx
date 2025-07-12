@@ -3,8 +3,10 @@ import { Container, Row, Col, Pagination, Spinner, Alert } from 'react-bootstrap
 import { Post } from '../types';
 import { postService } from '../services/postService';
 import PostCard from '../components/PostCard';
+import { useTheme } from '../context/ThemeContext';
 
 const Feed: React.FC = () => {
+  const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -107,8 +109,8 @@ const Feed: React.FC = () => {
     <div className="d-flex justify-content-center">
       <div style={{ maxWidth: '600px', width: '100%' }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4>Food Blog Feed</h4>
-          <div className="text-muted small">
+          <h4 className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Food Blog Feed</h4>
+          <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} small`}>
             {totalPosts} posts
           </div>
         </div>

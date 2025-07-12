@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Feed from './pages/Feed';
@@ -15,6 +16,7 @@ import './App.css';
 
 const AppContent: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [showSidebar, setShowSidebar] = React.useState(false);
 
   return (
@@ -30,28 +32,28 @@ const AppContent: React.FC = () => {
       </Button>
 
       {/* Side Panel */}
-      <div className={`sidebar bg-dark text-white ${showSidebar ? 'show' : ''}`} style={{ width: '250px', minHeight: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
+      <div className={`sidebar ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'} ${showSidebar ? 'show' : ''}`} style={{ width: '250px', minHeight: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
         <div className="p-3">
           <h4 className="mb-4">
-            <Link to="/" className="text-white text-decoration-none">TinyBrosBlog</Link>
+            <Link to="/" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-decoration-none`}>TinyBrosBlog</Link>
           </h4>
           
           <Nav className="flex-column">
-            <Nav.Link as={Link} to="/" className="text-white mb-2">
+            <Nav.Link as={Link} to="/" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
               <i className="bi bi-house-door me-2"></i>
               Feed
             </Nav.Link>
             {isAuthenticated && (
               <>
-                <Nav.Link as={Link} to="/create" className="text-white mb-2">
+                <Nav.Link as={Link} to="/create" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
                   <i className="bi bi-plus-circle me-2"></i>
                   Create Post
                 </Nav.Link>
-                <Nav.Link as={Link} to="/profile" className="text-white mb-2">
+                <Nav.Link as={Link} to="/profile" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
                   <i className="bi bi-person me-2"></i>
                   Profile
                 </Nav.Link>
-                <Nav.Link as={Link} to="/settings" className="text-white mb-2">
+                <Nav.Link as={Link} to="/settings" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
                   <i className="bi bi-gear me-2"></i>
                   Settings
                 </Nav.Link>
@@ -62,23 +64,36 @@ const AppContent: React.FC = () => {
           <hr className="my-4" />
           
           <div className="mt-auto">
+            {/* Theme Toggle */}
+            <div className="mb-3">
+              <Button 
+                variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
+                size="sm" 
+                onClick={toggleTheme} 
+                className="w-100 mb-2"
+              >
+                <i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} me-2`}></i>
+                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              </Button>
+            </div>
+            
             {isAuthenticated ? (
               <div>
-                <div className="text-muted mb-2 small">
+                <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2 small`}>
                   Welcome, {user?.displayName}!
                 </div>
-                <Button variant="outline-light" size="sm" onClick={logout} className="w-100">
+                <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={logout} className="w-100">
                   <i className="bi bi-box-arrow-right me-2"></i>
                   Logout
                 </Button>
               </div>
             ) : (
               <div>
-                <Nav.Link as={Link} to="/login" className="text-white mb-2">
+                <Nav.Link as={Link} to="/login" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
                   <i className="bi bi-box-arrow-in-right me-2"></i>
                   Login
                 </Nav.Link>
-                <Nav.Link as={Link} to="/register" className="text-white">
+                <Nav.Link as={Link} to="/register" className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
                   <i className="bi bi-person-plus me-2"></i>
                   Register
                 </Nav.Link>
@@ -125,11 +140,13 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
