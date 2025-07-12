@@ -107,8 +107,8 @@ const AppContent: React.FC = () => {
       {/* Main Content */}
       <div className="main-content" style={{ 
         marginLeft: '250px', 
-        marginRight: '280px',
-        width: 'calc(100% - 530px)', 
+        marginRight: isAuthenticated ? '280px' : '0px',
+        width: isAuthenticated ? 'calc(100% - 530px)' : 'calc(100% - 250px)', 
         minHeight: '100vh' 
       }}>
         {/* Mobile Overlay */}
@@ -141,8 +141,8 @@ const AppContent: React.FC = () => {
         </div>
       </div>
 
-      {/* Following Sidebar */}
-      <FollowingSidebar />
+      {/* Following Sidebar - only show when authenticated */}
+      {isAuthenticated && <FollowingSidebar />}
     </div>
   );
 };
