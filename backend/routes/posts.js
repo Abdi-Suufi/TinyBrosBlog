@@ -64,7 +64,7 @@ router.get('/', async (req, res) => {
 
     // Convert S3 keys to URLs for all posts
     const postsWithUrls = posts.map(post => {
-      const postObj = typeof post.toObject === 'function' ? post.toObject() : post;
+      const postObj = typeof post.toObject === 'function' ? post.toObject({ virtuals: true }) : post;
       postObj.image = getFileUrl(postObj.image);
       if (postObj.author.profilePicture) {
         postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
@@ -104,7 +104,7 @@ router.get('/user/:userId', async (req, res) => {
 
     // Convert S3 keys to URLs for all posts
     const postsWithUrls = posts.map(post => {
-      const postObj = typeof post.toObject === 'function' ? post.toObject() : post;
+      const postObj = typeof post.toObject === 'function' ? post.toObject({ virtuals: true }) : post;
       postObj.image = getFileUrl(postObj.image);
       if (postObj.author.profilePicture) {
         postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
