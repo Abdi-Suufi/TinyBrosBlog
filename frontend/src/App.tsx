@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-ro
 import { Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { Analytics } from "@vercel/analytics/react";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Feed from './pages/Feed';
@@ -179,6 +180,7 @@ function App() {
       <AuthProvider>
         <Router>
           <AppContent />
+          <Analytics />
         </Router>
       </AuthProvider>
     </ThemeProvider>
