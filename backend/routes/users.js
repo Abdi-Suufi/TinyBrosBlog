@@ -28,8 +28,18 @@ router.get('/feed', auth, async (req, res) => {
       author: { $in: user.following }
     });
 
+    // Convert S3 keys to URLs for posts
+    const postsWithUrls = posts.map(post => {
+      const postObj = post.toObject();
+      postObj.image = getFileUrl(postObj.image);
+      if (postObj.author.profilePicture) {
+        postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
+      }
+      return postObj;
+    });
+
     res.json({
-      posts,
+      posts: postsWithUrls,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
       totalPosts: total
@@ -51,7 +61,16 @@ router.get('/:id/following', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user.following);
+    // Convert profile picture URLs for following users
+    const followingWithUrls = user.following.map(followingUser => {
+      const userObj = followingUser.toObject();
+      if (userObj.profilePicture) {
+        userObj.profilePicture = getFileUrl(userObj.profilePicture);
+      }
+      return userObj;
+    });
+    
+    res.json(followingWithUrls);
   } catch (error) {
     console.error('Error in following endpoint:', error);
     res.status(500).json({ message: 'Server error' });
@@ -73,8 +92,18 @@ router.get('/:id/posts', async (req, res) => {
 
     const total = await Post.countDocuments({ author: req.params.id });
 
+    // Convert S3 keys to URLs for posts
+    const postsWithUrls = posts.map(post => {
+      const postObj = post.toObject();
+      postObj.image = getFileUrl(postObj.image);
+      if (postObj.author.profilePicture) {
+        postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
+      }
+      return postObj;
+    });
+
     res.json({
-      posts,
+      posts: postsWithUrls,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
       totalPosts: total
@@ -98,7 +127,16 @@ router.get('/search/:query', async (req, res) => {
       .select('username displayName profilePicture')
       .limit(10);
 
-    res.json(users);
+    // Convert profile picture URLs for search results
+    const usersWithUrls = users.map(user => {
+      const userObj = user.toObject();
+      if (userObj.profilePicture) {
+        userObj.profilePicture = getFileUrl(userObj.profilePicture);
+      }
+      return userObj;
+    });
+    
+    res.json(usersWithUrls);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -117,7 +155,31 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user);
+    // Convert profile picture URLs for user profile
+    const userResponse = user.toObject();
+    if (userResponse.profilePicture) {
+      userResponse.profilePicture = getFileUrl(userResponse.profilePicture);
+    }
+    if (userResponse.followers) {
+      userResponse.followers = userResponse.followers.map(follower => {
+        const followerObj = follower.toObject();
+        if (followerObj.profilePicture) {
+          followerObj.profilePicture = getFileUrl(followerObj.profilePicture);
+        }
+        return followerObj;
+      });
+    }
+    if (userResponse.following) {
+      userResponse.following = userResponse.following.map(followingUser => {
+        const followingObj = followingUser.toObject();
+        if (followingObj.profilePicture) {
+          followingObj.profilePicture = getFileUrl(followingObj.profilePicture);
+        }
+        return followingObj;
+      });
+    }
+    
+    res.json(userResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

@@ -188,7 +188,23 @@ router.put('/:id', auth, async (req, res) => {
     await post.populate('author', 'username displayName profilePicture');
     await post.populate('comments.user', 'username displayName profilePicture');
     
-    res.json(post);
+    // Convert S3 keys to URLs
+    const postResponse = post.toObject();
+    postResponse.image = getFileUrl(postResponse.image);
+    if (postResponse.author.profilePicture) {
+      postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
+    }
+    if (postResponse.comments) {
+      postResponse.comments = postResponse.comments.map(comment => ({
+        ...comment,
+        user: {
+          ...comment.user,
+          profilePicture: comment.user.profilePicture ? getFileUrl(comment.user.profilePicture) : null
+        }
+      }));
+    }
+    
+    res.json(postResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -242,7 +258,23 @@ router.put('/:id/like', auth, async (req, res) => {
     await post.populate('author', 'username displayName profilePicture');
     await post.populate('comments.user', 'username displayName profilePicture');
     
-    res.json(post);
+    // Convert S3 keys to URLs
+    const postResponse = post.toObject();
+    postResponse.image = getFileUrl(postResponse.image);
+    if (postResponse.author.profilePicture) {
+      postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
+    }
+    if (postResponse.comments) {
+      postResponse.comments = postResponse.comments.map(comment => ({
+        ...comment,
+        user: {
+          ...comment.user,
+          profilePicture: comment.user.profilePicture ? getFileUrl(comment.user.profilePicture) : null
+        }
+      }));
+    }
+    
+    res.json(postResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -270,7 +302,14 @@ router.post('/:id/comments', auth, async (req, res) => {
     // Populate the new comment's user info
     await post.populate('comments.user', 'username displayName profilePicture');
     
-    res.json(post.comments[0]);
+    // Convert the comment's user profile picture URL
+    const commentResponse = post.comments[0].toObject();
+    commentResponse.user = {
+      ...commentResponse.user,
+      profilePicture: commentResponse.user.profilePicture ? getFileUrl(commentResponse.user.profilePicture) : null
+    };
+    
+    res.json(commentResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

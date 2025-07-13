@@ -18,7 +18,7 @@ export const getBackendAssetUrl = (path: string): string => {
     }
     // Fallback if S3_BUCKET_URL is not set
     const bucketName = process.env.REACT_APP_AWS_S3_BUCKET_NAME;
-    const region = process.env.REACT_APP_AWS_REGION || 'us-east-1';
+    const region = process.env.REACT_APP_AWS_REGION || 'eu-west-2';
     if (bucketName) {
       return `https://${bucketName}.s3.${region}.amazonaws.com/${path}`;
     }
