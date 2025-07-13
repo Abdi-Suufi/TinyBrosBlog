@@ -63,7 +63,7 @@ router.get('/:id/following', async (req, res) => {
 
     // Convert profile picture URLs for following users
     const followingWithUrls = user.following.map(followingUser => {
-      const userObj = followingUser.toObject();
+      const userObj = typeof followingUser.toObject === 'function' ? followingUser.toObject() : followingUser;
       if (userObj.profilePicture) {
         userObj.profilePicture = getFileUrl(userObj.profilePicture);
       }
@@ -129,7 +129,7 @@ router.get('/search/:query', async (req, res) => {
 
     // Convert profile picture URLs for search results
     const usersWithUrls = users.map(user => {
-      const userObj = user.toObject();
+      const userObj = typeof user.toObject === 'function' ? user.toObject() : user;
       if (userObj.profilePicture) {
         userObj.profilePicture = getFileUrl(userObj.profilePicture);
       }
@@ -162,7 +162,7 @@ router.get('/:id', async (req, res) => {
     }
     if (userResponse.followers) {
       userResponse.followers = userResponse.followers.map(follower => {
-        const followerObj = follower.toObject();
+        const followerObj = typeof follower.toObject === 'function' ? follower.toObject() : follower;
         if (followerObj.profilePicture) {
           followerObj.profilePicture = getFileUrl(followerObj.profilePicture);
         }
@@ -171,7 +171,7 @@ router.get('/:id', async (req, res) => {
     }
     if (userResponse.following) {
       userResponse.following = userResponse.following.map(followingUser => {
-        const followingObj = followingUser.toObject();
+        const followingObj = typeof followingUser.toObject === 'function' ? followingUser.toObject() : followingUser;
         if (followingObj.profilePicture) {
           followingObj.profilePicture = getFileUrl(followingObj.profilePicture);
         }

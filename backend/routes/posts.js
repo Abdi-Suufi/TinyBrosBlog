@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
 
     // Convert S3 keys to URLs for all posts
     const postsWithUrls = posts.map(post => {
-      const postObj = post.toObject();
+      const postObj = typeof post.toObject === 'function' ? post.toObject() : post;
       postObj.image = getFileUrl(postObj.image);
       if (postObj.author.profilePicture) {
         postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
@@ -102,7 +102,7 @@ router.get('/user/:userId', async (req, res) => {
 
     // Convert S3 keys to URLs for all posts
     const postsWithUrls = posts.map(post => {
-      const postObj = post.toObject();
+      const postObj = typeof post.toObject === 'function' ? post.toObject() : post;
       postObj.image = getFileUrl(postObj.image);
       if (postObj.author.profilePicture) {
         postObj.author.profilePicture = getFileUrl(postObj.author.profilePicture);
@@ -138,7 +138,7 @@ router.get('/:id', async (req, res) => {
     }
 
     // Convert S3 keys to URLs
-    const postResponse = post.toObject();
+    const postResponse = typeof post.toObject === 'function' ? post.toObject() : post;
     postResponse.image = getFileUrl(postResponse.image);
     if (postResponse.author.profilePicture) {
       postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
@@ -189,7 +189,7 @@ router.put('/:id', auth, async (req, res) => {
     await post.populate('comments.user', 'username displayName profilePicture');
     
     // Convert S3 keys to URLs
-    const postResponse = post.toObject();
+    const postResponse = typeof post.toObject === 'function' ? post.toObject() : post;
     postResponse.image = getFileUrl(postResponse.image);
     if (postResponse.author.profilePicture) {
       postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
@@ -259,7 +259,7 @@ router.put('/:id/like', auth, async (req, res) => {
     await post.populate('comments.user', 'username displayName profilePicture');
     
     // Convert S3 keys to URLs
-    const postResponse = post.toObject();
+    const postResponse = typeof post.toObject === 'function' ? post.toObject() : post;
     postResponse.image = getFileUrl(postResponse.image);
     if (postResponse.author.profilePicture) {
       postResponse.author.profilePicture = getFileUrl(postResponse.author.profilePicture);
