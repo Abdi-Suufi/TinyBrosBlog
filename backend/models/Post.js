@@ -100,7 +100,32 @@ postSchema.virtual('commentCount').get(function() {
   return this.comments.length;
 });
 
-// Ensure virtuals are serialized
-postSchema.set('toJSON', { virtuals: true });
+// Ensure virtuals are serialized and ObjectIds are converted to strings
+postSchema.set('toJSON', { 
+  virtuals: true,
+  transform: function(doc, ret) {
+    // Convert ObjectIds to strings in likes arrays
+    if (ret.likes) {
+      ret.likes = ret.likes.map(like => like.toString());
+    }
+    if (ret.comments) {
+      ret.comments = ret.comments.map(comment => {
+        if (comment.likes) {
+          comment.likes = comment.likes.map(like => like.toString());
+        }
+        if (comment.replies) {
+          comment.replies = comment.replies.map(reply => {
+            if (reply.likes) {
+              reply.likes = reply.likes.map(like => like.toString());
+            }
+            return reply;
+          });
+        }
+        return comment;
+      });
+    }
+    return ret;
+  }
+});
 
 module.exports = mongoose.model('Post', postSchema); 

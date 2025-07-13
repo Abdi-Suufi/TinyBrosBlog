@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { postService } from '../services/postService';
 import { getBackendAssetUrl } from '../utils/config';
 import { formatDate, formatFullDate } from '../utils/dateUtils';
+import CommentItem from '../components/CommentItem';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -79,6 +80,17 @@ const PostDetail: React.FC = () => {
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
+  };
+
+  const handleCommentUpdate = (updatedComment: Comment) => {
+    if (!post) return;
+    
+    setPost(prev => prev ? {
+      ...prev,
+      comments: prev.comments.map(comment => 
+        comment._id === updatedComment._id ? updatedComment : comment
+      )
+    } : null);
   };
 
   const handleDeletePost = async () => {
@@ -245,36 +257,14 @@ const PostDetail: React.FC = () => {
               ) : (
                 <div>
                   {post.comments.map((comment) => (
-                    <div key={comment._id} className="d-flex align-items-start mb-3">
-                      <img
-                        src={comment.user.profilePicture ? getBackendAssetUrl(comment.user.profilePicture) : 'https://via.placeholder.com/40'}
-                        alt={comment.user.displayName}
-                        className="rounded-circle me-2"
-                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                      />
-                      <div className="flex-grow-1">
-                        <div className="d-flex justify-content-between align-items-start">
-                          <div>
-                            <Link to={`/profile/${comment.user._id}`} className="text-decoration-none">
-                              <strong>{comment.user.displayName}</strong>
-                            </Link>
-                            <p className="mb-1">{comment.text}</p>
-                            <small className="text-muted">
-                              {formatDate(comment.createdAt)}
-                            </small>
-                          </div>
-                          {user?.id === comment.user._id && (
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => handleDeleteComment(comment._id)}
-                            >
-                              ×
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                    <CommentItem
+                      key={comment._id}
+                      comment={comment}
+                      postId={post._id}
+                      onCommentUpdate={handleCommentUpdate}
+                      onCommentDelete={handleDeleteComment}
+                      isAuthor={isAuthor}
+                    />
                   ))}
                 </div>
               )}

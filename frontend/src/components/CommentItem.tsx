@@ -12,10 +12,11 @@ interface CommentItemProps {
   comment: Comment;
   postId: string;
   onCommentUpdate: (updatedComment: Comment) => void;
+  onCommentDelete?: (commentId: string) => void;
   isAuthor: boolean;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpdate, isAuthor }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpdate, onCommentDelete, isAuthor }) => {
   const { user } = useAuth();
   const { theme } = useTheme();
   const [showReplies, setShowReplies] = useState(false);
@@ -65,7 +66,10 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpd
     
     try {
       await postService.deleteComment(postId, comment._id);
-      // The parent component should handle the comment removal
+      // Call the parent callback to remove the comment from the list
+      if (onCommentDelete) {
+        onCommentDelete(comment._id);
+      }
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
