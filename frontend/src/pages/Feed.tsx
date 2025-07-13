@@ -109,7 +109,7 @@ const Feed: React.FC = () => {
     <div className="d-flex justify-content-center">
       <div style={{ maxWidth: '600px', width: '100%' }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Food Blog Feed</h4>
+          <h4 className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Blog Feed</h4>
           <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} small`}>
             {totalPosts} posts
           </div>
