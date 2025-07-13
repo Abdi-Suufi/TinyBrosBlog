@@ -5,8 +5,8 @@ export interface User {
   displayName: string;
   profilePicture?: string;
   bio?: string;
-  followers: string[];
-  following: string[];
+  followers: (string | { _id: string; username: string; displayName: string; profilePicture?: string })[];
+  following: (string | { _id: string; username: string; displayName: string; profilePicture?: string })[];
   createdAt: string;
   updatedAt: string;
 }

@@ -79,9 +79,14 @@ const Profile: React.FC = () => {
     try {
       setLoadingFollowers(true);
       const followers = await Promise.all(
-        user.followers.map(async (followerId: any) => {
+        user.followers.map(async (follower: any) => {
           try {
-            const userId = typeof followerId === 'string' ? followerId : followerId._id;
+            // If it's already a populated user object, use it directly
+            if (typeof follower === 'object' && follower.username) {
+              return follower;
+            }
+            // If it's a string ID, fetch the user
+            const userId = typeof follower === 'string' ? follower : follower._id;
             return await userService.getUserProfile(userId);
           } catch (err) {
             console.error('Failed to fetch follower:', err);
@@ -103,9 +108,14 @@ const Profile: React.FC = () => {
     try {
       setLoadingFollowing(true);
       const following = await Promise.all(
-        user.following.map(async (followingId: any) => {
+        user.following.map(async (followingUser: any) => {
           try {
-            const userId = typeof followingId === 'string' ? followingId : followingId._id;
+            // If it's already a populated user object, use it directly
+            if (typeof followingUser === 'object' && followingUser.username) {
+              return followingUser;
+            }
+            // If it's a string ID, fetch the user
+            const userId = typeof followingUser === 'string' ? followingUser : followingUser._id;
             return await userService.getUserProfile(userId);
           } catch (err) {
             console.error('Failed to fetch following user:', err);
@@ -130,8 +140,10 @@ const Profile: React.FC = () => {
       setUser(prev => prev ? {
         ...prev,
         followers: result.following 
-          ? [...prev.followers, currentUser.id]
-          : prev.followers.filter(id => id !== currentUser.id)
+          ? [...prev.followers, { _id: currentUser.id, username: currentUser.username, displayName: currentUser.displayName, profilePicture: currentUser.profilePicture }]
+          : prev.followers.filter(follower => 
+              typeof follower === 'string' ? follower !== currentUser.id : follower._id !== currentUser.id
+            )
       } : null);
     } catch (err: any) {
       console.error('Failed to follow user:', err);
@@ -160,7 +172,11 @@ const Profile: React.FC = () => {
     setActiveTab(tabKey || 'posts');
   };
 
-  const isFollowing = user && currentUser ? user.followers.includes(currentUser.id) : false;
+  // Check if current user is following the profile user
+  const isFollowing = user && currentUser ? 
+    user.followers.some(follower => 
+      typeof follower === 'string' ? follower === currentUser.id : follower._id === currentUser.id
+    ) : false;
 
   // Show loading spinner while auth is loading or profile is loading
   if (loading || (!currentUser && !id)) {
