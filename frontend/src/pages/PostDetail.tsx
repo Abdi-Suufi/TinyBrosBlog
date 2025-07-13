@@ -5,6 +5,7 @@ import { Post, Comment } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { postService } from '../services/postService';
 import { getBackendAssetUrl } from '../utils/config';
+import { formatDate, formatFullDate } from '../utils/dateUtils';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -144,7 +145,7 @@ const PostDetail: React.FC = () => {
                       <h5 className="mb-0">{post.author.displayName}</h5>
                     </Link>
                     <small className="text-muted">
-                      {new Date(post.createdAt).toLocaleDateString()} at {new Date(post.createdAt).toLocaleTimeString()}
+                      {formatFullDate(post.createdAt)}
                     </small>
                   </div>
                 </div>
@@ -259,10 +260,10 @@ const PostDetail: React.FC = () => {
                             </Link>
                             <p className="mb-1">{comment.text}</p>
                             <small className="text-muted">
-                              {new Date(comment.createdAt).toLocaleDateString()} at {new Date(comment.createdAt).toLocaleTimeString()}
+                              {formatDate(comment.createdAt)}
                             </small>
                           </div>
-                          {(user?.id === comment.user._id || isAuthor) && (
+                          {user?.id === comment.user._id && (
                             <Button
                               variant="outline-danger"
                               size="sm"

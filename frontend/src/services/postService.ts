@@ -1,5 +1,5 @@
 import api from './api';
-import { Post, Comment } from '../types';
+import { Post, Comment, Reply } from '../types';
 
 export const postService = {
   async getPosts(page = 1, limit = 10): Promise<{
@@ -47,6 +47,25 @@ export const postService = {
 
   async deleteComment(postId: string, commentId: string): Promise<void> {
     await api.delete(`/posts/${postId}/comments/${commentId}`);
+  },
+
+  async likeComment(postId: string, commentId: string): Promise<Comment> {
+    const response = await api.put(`/posts/${postId}/comments/${commentId}/like`);
+    return response.data;
+  },
+
+  async addReply(postId: string, commentId: string, text: string): Promise<Reply> {
+    const response = await api.post(`/posts/${postId}/comments/${commentId}/replies`, { text });
+    return response.data;
+  },
+
+  async likeReply(postId: string, commentId: string, replyId: string): Promise<Reply> {
+    const response = await api.put(`/posts/${postId}/comments/${commentId}/replies/${replyId}/like`);
+    return response.data;
+  },
+
+  async deleteReply(postId: string, commentId: string, replyId: string): Promise<void> {
+    await api.delete(`/posts/${postId}/comments/${commentId}/replies/${replyId}`);
   },
 
   async getUserPosts(userId: string, page = 1, limit = 10): Promise<{

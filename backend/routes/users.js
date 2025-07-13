@@ -20,6 +20,8 @@ router.get('/feed', auth, async (req, res) => {
       author: { $in: user.following }
     })
       .populate('author', 'username displayName profilePicture')
+      .populate('comments.user', 'username displayName profilePicture')
+      .populate('comments.replies.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -86,6 +88,8 @@ router.get('/:id/posts', async (req, res) => {
 
     const posts = await Post.find({ author: req.params.id })
       .populate('author', 'username displayName profilePicture')
+      .populate('comments.user', 'username displayName profilePicture')
+      .populate('comments.replies.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

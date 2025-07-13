@@ -6,6 +6,8 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { postService } from '../services/postService';
 import { getBackendAssetUrl } from '../utils/config';
+import { formatDate } from '../utils/dateUtils';
+import CommentItem from './CommentItem';
 
 interface PostCardProps {
   post: Post;
@@ -104,7 +106,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
           <div className={`fw-bold small ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>{post.author.displayName}</div>
         </Link>
         <div className="text-muted" style={{ fontSize: '0.75rem' }}>
-          {new Date(post.createdAt).toLocaleDateString()}
+          {formatDate(post.createdAt)}
         </div>
           </div>
         </div>
@@ -222,52 +224,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
             )}
 
             <div>
-              {post.comments.map((comment) => {
-                const profilePictureUrl = comment.user.profilePicture 
-                  ? getBackendAssetUrl(comment.user.profilePicture)
-                  : 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
-                
-                return (
-                  <div key={comment._id} className="d-flex align-items-start mb-2">
-                    <img
-                      src={profilePictureUrl}
-                      alt={comment.user.displayName || 'User'}
-                      className="rounded-circle me-2"
-                      style={{ width: '24px', height: '24px', objectFit: 'cover' }}
-                      onError={(e) => {
-                        // Fallback to placeholder if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
-                      }}
-                    />
-                    <div className="flex-grow-1">
-                      <div className="d-flex justify-content-between align-items-start">
-                        <div>
-                          <Link to={`/profile/${comment.user._id}`} className="text-decoration-none">
-                            <span className={`fw-bold small ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-                              {comment.user.displayName || comment.user.username || 'Unknown User'}
-                            </span>
-                          </Link>
-                          <div className={`small ${theme === 'dark' ? 'text-light' : 'text-dark'}`}>{comment.text}</div>
-                          <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`} style={{ fontSize: '0.7rem' }}>
-                            {new Date(comment.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                        {(user?.id === comment.user._id || isAuthor) && (
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleDeleteComment(comment._id)}
-                            style={{ fontSize: '0.7rem', padding: '0.125rem 0.25rem' }}
-                          >
-                            ×
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {post.comments.map((comment) => (
+                <CommentItem
+                  key={comment._id}
+                  comment={comment}
+                  postId={post._id}
+                  onCommentUpdate={(updatedComment) => {
+                    const updatedComments = post.comments.map(c => 
+                      c._id === updatedComment._id ? updatedComment : c
+                    );
+                    onPostUpdate?.({ ...post, comments: updatedComments });
+                  }}
+                  isAuthor={isAuthor}
+                />
+              ))}
             </div>
           </div>
         )}

@@ -29,10 +29,20 @@ export interface Post {
   updatedAt: string;
 }
 
+export interface Reply {
+  _id: string;
+  user: User;
+  text: string;
+  likes: string[];
+  createdAt: string;
+}
+
 export interface Comment {
   _id: string;
   user: User;
   text: string;
+  likes: string[];
+  replies: Reply[];
   createdAt: string;
 }
 

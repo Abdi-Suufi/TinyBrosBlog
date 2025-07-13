@@ -55,6 +55,7 @@ router.get('/', async (req, res) => {
     const posts = await Post.find()
       .populate('author', 'username displayName profilePicture')
       .populate('comments.user', 'username displayName profilePicture')
+      .populate('comments.replies.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -98,6 +99,7 @@ router.get('/user/:userId', async (req, res) => {
     const posts = await Post.find({ author: req.params.userId })
       .populate('author', 'username displayName profilePicture')
       .populate('comments.user', 'username displayName profilePicture')
+      .populate('comments.replies.user', 'username displayName profilePicture')
       .sort({ createdAt: -1 });
 
     // Convert S3 keys to URLs for all posts
@@ -131,7 +133,8 @@ router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate('author', 'username displayName profilePicture')
-      .populate('comments.user', 'username displayName profilePicture');
+      .populate('comments.user', 'username displayName profilePicture')
+      .populate('comments.replies.user', 'username displayName profilePicture');
 
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
@@ -187,6 +190,7 @@ router.put('/:id', auth, async (req, res) => {
     
     await post.populate('author', 'username displayName profilePicture');
     await post.populate('comments.user', 'username displayName profilePicture');
+    await post.populate('comments.replies.user', 'username displayName profilePicture');
     
     // Convert S3 keys to URLs
     const postResponse = typeof post.toObject === 'function' ? post.toObject() : post;
@@ -257,6 +261,7 @@ router.put('/:id/like', auth, async (req, res) => {
     // Populate author and comments for the response
     await post.populate('author', 'username displayName profilePicture');
     await post.populate('comments.user', 'username displayName profilePicture');
+    await post.populate('comments.replies.user', 'username displayName profilePicture');
     
     // Convert S3 keys to URLs
     const postResponse = typeof post.toObject === 'function' ? post.toObject() : post;
@@ -294,7 +299,9 @@ router.post('/:id/comments', auth, async (req, res) => {
 
     post.comments.unshift({
       user: req.user._id,
-      text
+      text,
+      likes: [],
+      replies: []
     });
 
     await post.save();
@@ -303,13 +310,186 @@ router.post('/:id/comments', auth, async (req, res) => {
     await post.populate('comments.user', 'username displayName profilePicture');
     
     // Convert the comment's user profile picture URL
-    const commentResponse = post.comments[0].toObject();
+    const commentResponse = typeof post.comments[0].toObject === 'function' ? post.comments[0].toObject() : post.comments[0];
     commentResponse.user = {
       ...commentResponse.user,
       profilePicture: commentResponse.user.profilePicture ? getFileUrl(commentResponse.user.profilePicture) : null
     };
     
     res.json(commentResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Like/Unlike comment
+router.put('/:id/comments/:commentId/like', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const comment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    const likeIndex = comment.likes.indexOf(req.user._id);
+    
+    if (likeIndex > -1) {
+      // Unlike
+      comment.likes.splice(likeIndex, 1);
+    } else {
+      // Like
+      comment.likes.push(req.user._id);
+    }
+
+    await post.save();
+    
+    // Populate comment user info
+    await post.populate('comments.user', 'username displayName profilePicture');
+    await post.populate('comments.replies.user', 'username displayName profilePicture');
+    
+    const updatedComment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+    
+    // Convert URLs
+    const commentResponse = typeof updatedComment.toObject === 'function' ? updatedComment.toObject() : updatedComment;
+    commentResponse.user = {
+      ...commentResponse.user,
+      profilePicture: commentResponse.user.profilePicture ? getFileUrl(commentResponse.user.profilePicture) : null
+    };
+    
+    if (commentResponse.replies) {
+      commentResponse.replies = commentResponse.replies.map(reply => ({
+        ...reply,
+        user: {
+          ...reply.user,
+          profilePicture: reply.user.profilePicture ? getFileUrl(reply.user.profilePicture) : null
+        }
+      }));
+    }
+    
+    res.json(commentResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Add reply to comment
+router.post('/:id/comments/:commentId/replies', auth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    
+    const post = await Post.findById(req.params.id);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const comment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    comment.replies.unshift({
+      user: req.user._id,
+      text,
+      likes: []
+    });
+
+    await post.save();
+    
+    // Populate reply user info
+    await post.populate('comments.replies.user', 'username displayName profilePicture');
+    
+    const updatedComment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+    
+    const newReply = updatedComment.replies[0];
+    
+    // Convert URLs
+    const replyResponse = typeof newReply.toObject === 'function' ? newReply.toObject() : newReply;
+    replyResponse.user = {
+      ...replyResponse.user,
+      profilePicture: replyResponse.user.profilePicture ? getFileUrl(replyResponse.user.profilePicture) : null
+    };
+    
+    res.json(replyResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Like/Unlike reply
+router.put('/:id/comments/:commentId/replies/:replyId/like', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const comment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    const reply = comment.replies.find(
+      reply => reply._id.toString() === req.params.replyId
+    );
+
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
+    }
+
+    const likeIndex = reply.likes.indexOf(req.user._id);
+    
+    if (likeIndex > -1) {
+      // Unlike
+      reply.likes.splice(likeIndex, 1);
+    } else {
+      // Like
+      reply.likes.push(req.user._id);
+    }
+
+    await post.save();
+    
+    // Populate reply user info
+    await post.populate('comments.replies.user', 'username displayName profilePicture');
+    
+    const updatedComment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+    
+    const updatedReply = updatedComment.replies.find(
+      reply => reply._id.toString() === req.params.replyId
+    );
+    
+    // Convert URLs
+    const replyResponse = typeof updatedReply.toObject === 'function' ? updatedReply.toObject() : updatedReply;
+    replyResponse.user = {
+      ...replyResponse.user,
+      profilePicture: replyResponse.user.profilePicture ? getFileUrl(replyResponse.user.profilePicture) : null
+    };
+    
+    res.json(replyResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -333,9 +513,8 @@ router.delete('/:id/comments/:commentId', auth, async (req, res) => {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
-    // Check if user owns the comment or the post
-    if (comment.user.toString() !== req.user._id.toString() && 
-        post.author.toString() !== req.user._id.toString()) {
+    // Check if user owns the comment (only comment author can delete)
+    if (comment.user.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -347,6 +526,50 @@ router.delete('/:id/comments/:commentId', auth, async (req, res) => {
     await post.save();
 
     res.json({ message: 'Comment removed' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Remove reply
+router.delete('/:id/comments/:commentId/replies/:replyId', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const comment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    const reply = comment.replies.find(
+      reply => reply._id.toString() === req.params.replyId
+    );
+
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
+    }
+
+    // Check if user owns the reply (only reply author can delete)
+    if (reply.user.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    const removeIndex = comment.replies
+      .map(reply => reply._id.toString())
+      .indexOf(req.params.replyId);
+
+    comment.replies.splice(removeIndex, 1);
+    await post.save();
+
+    res.json({ message: 'Reply removed' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
