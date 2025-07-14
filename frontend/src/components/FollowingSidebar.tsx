@@ -47,7 +47,9 @@ const FollowingSidebar: React.FC = () => {
       marginTop: '6.5rem',
       backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff',
       borderLeft: `1px solid ${theme === 'dark' ? 'var(--border)' : 'var(--border)'}`,
-      overflowY: 'auto'
+      overflowY: 'auto',
+      position: 'sticky', // Add this line
+      top: '2rem' // Add this line and adjust the value as needed
     }}>
       <Card style={{ border: 'none', backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff' }}>
         <Card.Header style={{ borderColor: theme === 'dark' ? 'var(--border)' : 'var(--border)', backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff', color: theme === 'dark' ? 'var(--text-primary)' : 'var(--text-primary)' }}>

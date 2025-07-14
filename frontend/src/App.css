@@ -255,3 +255,29 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* --- Make left sidebar sticky --- */
+.left-sidebar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1020;
+  align-self: flex-start;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  /* keep existing styles */
+}
+
+/* --- Make right sidebar sticky --- */
+.following-sidebar {
+  position: sticky;
+  top: 0;
+  right: 0;
+  z-index: 1020;
+  align-self: flex-start;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  /* keep existing styles */
+}

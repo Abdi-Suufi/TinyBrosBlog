@@ -181,7 +181,7 @@ const Feed: React.FC = () => {
           )}
         </div>
         {/* Right sidebar (FollowingSidebar) */}
-        <div className="feed-right-sidebar d-none d-lg-block" style={{ width: '280px', flexShrink: 0 }}>
+        <div className="feed-right-sidebar d-none d-lg-block" style={{ width: '280px', flexShrink: 0, alignSelf: 'flex-start' }}>
           <FollowingSidebar />
         </div>
       </div>
