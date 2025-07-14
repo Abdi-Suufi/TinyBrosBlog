@@ -50,7 +50,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
       <div style={{ maxWidth: '400px', width: '100%' }}>
         <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
           borderColor: theme === 'dark' ? 'var(--border)' : undefined,

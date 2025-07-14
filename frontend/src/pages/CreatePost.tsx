@@ -128,7 +128,8 @@ const CreatePost: React.FC = () => {
       <div style={{ maxWidth: '800px', width: '100%' }}>
         <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
           borderColor: theme === 'dark' ? 'var(--border)' : undefined,
-          backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined
+          backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined,
+          marginTop: '2rem',
         }}>
           <Card.Body>
             <h2 className={`text-center mb-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Create New Post</h2>

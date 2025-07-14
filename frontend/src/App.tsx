@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -16,159 +16,123 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
 
-const AppContent: React.FC = () => {
+const LeftSidebar: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [showSidebar, setShowSidebar] = React.useState(false);
 
   return (
-    <div className="d-flex" data-theme={theme}>
-      {/* Mobile Toggle Button */}
-      <Button 
-        variant="dark" 
-        className="d-md-none position-fixed" 
-        style={{ top: '10px', left: '10px', zIndex: 1001 }}
-        onClick={() => setShowSidebar(!showSidebar)}
-      >
-        <i className="bi bi-list"></i>
-      </Button>
-
-      {/* Side Panel */}
-      <div className={`sidebar ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'} ${showSidebar ? 'show' : ''}`} style={{ width: '250px', height: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
-        <div className="p-3">
-          <h4 className="mb-4">
-            <Link to="/" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-decoration-none`}>TinyBrosBlog</Link>
-          </h4>
-          
-          <Nav className="flex-column">
-            <Nav.Link as={Link} to="/" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-              <i className="bi bi-house-door me-2"></i>
-              Feed
-            </Nav.Link>
-            {isAuthenticated && (
-              <>
-                <Nav.Link as={Link} to="/create" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-                  <i className="bi bi-plus-circle me-2"></i>
-                  Create Post
-                </Nav.Link>
-                <Nav.Link as={Link} to="/profile" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-                  <i className="bi bi-person me-2"></i>
-                  Profile
-                </Nav.Link>
-                <Nav.Link as={Link} to="/settings" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-                  <i className="bi bi-gear me-2"></i>
-                  Settings
-                </Nav.Link>
-              </>
-            )}
-          </Nav>
-          
-          <hr className="my-4" />
-          
-          {/* Support Section */}
-          <div className="mb-4">
-            <h6 className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-3 small text-uppercase`}>
-              <i className="bi bi-question-circle me-2"></i>
-              Support
-            </h6>
-            <Nav className="flex-column">
-              <Nav.Link as={Link} to="/support" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-                <i className="bi bi-headset me-2"></i>
-                Contact Support
-              </Nav.Link>
-              <Nav.Link href="mailto:support@tinybrosblog.com" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-                <i className="bi bi-envelope me-2"></i>
-                Email Support
-              </Nav.Link>
-              <Nav.Link href="https://github.com/Abdi-Suufi/TinyBrosBlog/issues" target="_blank" rel="noopener noreferrer" className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-                <i className="bi bi-bug me-2"></i>
-                Report Bug
-              </Nav.Link>
-            </Nav>
-          </div>
-          
-          <hr className="my-4" />
-          
-          <div className="mt-auto">
-            {/* Theme Toggle */}
-            <div className="mb-3">
-              <Button 
-                variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
-                size="sm" 
-                onClick={toggleTheme} 
-                className="w-100 mb-2"
-              >
-                <i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} me-2`}></i>
-                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-              </Button>
-            </div>
-            
-            {isAuthenticated ? (
-              <div>
-                <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2 small`}>
-                  Welcome, {user?.displayName}!
-                </div>
-                <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={logout} className="w-100">
-                  <i className="bi bi-box-arrow-right me-2"></i>
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <Nav.Link as={Link} to="/login" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}>
-                  <i className="bi bi-box-arrow-in-right me-2"></i>
-                  Login
-                </Nav.Link>
-                <Nav.Link as={Link} to="/register" className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-                  <i className="bi bi-person-plus me-2"></i>
-                  Register
-                </Nav.Link>
-              </div>
-            )}
-          </div>
-        </div>
+    <div
+      className={`left-sidebar d-none d-lg-flex flex-column ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+      style={{
+        width: '250px',
+        minHeight: '100vh',
+        marginRight: '1.5rem',
+        padding: '1.5rem 1rem',
+        borderRight: `1px solid var(--border)`,
+        background: theme === 'dark' ? '#23272f' : '#ffffff',
+        overflowY: 'auto',
+      }}
+    >
+      <style>{`
+        .sidebar-title-link {
+          transition: transform 0.18s cubic-bezier(.4,2,.6,1), text-shadow 0.18s cubic-bezier(.4,2,.6,1);
+        }
+        .sidebar-title-link:hover {
+          transform: scale(1.07);
+          text-shadow: 0 2px 16px var(--accent, #4dabf7), 0 1px 2px rgba(0,0,0,0.08);
+        }
+      `}</style>
+      <div className="mb-4" style={{ fontFamily: 'Poppins, Inter, sans-serif', fontWeight: 600, fontSize: '1.1rem', letterSpacing: '0.03em', lineHeight: 1.1, marginLeft: '1.5rem' }}>
+        <Link to="/" className="text-decoration-none sidebar-title-link" style={{ color: theme === 'dark' ? '#fff' : '#23272f', display: 'block', textAlign: 'left' }}>
+          <div style={{ fontWeight: 700 }}>Tiny</div>
+          <div style={{ color: 'var(--accent)', fontWeight: 700 }}>bros</div>
+          <div style={{ fontWeight: 400, letterSpacing: '0.08em' }}>blog</div>
+        </Link>
       </div>
-      
-      {/* Main Content */}
-      <div className={`main-content ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}`} style={{ 
-        marginLeft: '250px', 
-        marginRight: isAuthenticated ? '280px' : '0px',
-        width: isAuthenticated ? 'calc(100% - 530px)' : 'calc(100% - 250px)', 
-        minHeight: '100vh' 
-      }}>
-        {/* Mobile Overlay */}
-        {showSidebar && (
-          <div 
-            className="d-md-none position-fixed" 
-            style={{ 
-              top: 0, 
-              left: 0, 
-              right: 0, 
-              bottom: 0, 
-              backgroundColor: 'rgba(0,0,0,0.5)', 
-              zIndex: 999 
-            }}
-            onClick={() => setShowSidebar(false)}
-          />
+      <Nav className="flex-column mb-4">
+        <Nav.Link as={Link} to="/" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-house-door me-2"></i>Feed</Nav.Link>
+        {isAuthenticated && (
+          <>
+            <Nav.Link as={Link} to="/create" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-plus-circle me-2"></i>Create Post</Nav.Link>
+            <Nav.Link as={Link} to="/profile" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-person me-2"></i>Profile</Nav.Link>
+            <Nav.Link as={Link} to="/settings" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-gear me-2"></i>Settings</Nav.Link>
+          </>
         )}
-        <div className="p-3">
-          <Routes>
-            <Route path="/" element={<Feed />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/register" element={<AuthPage />} />
-            <Route path="/profile/:id" element={<Profile />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/post/:id" element={<PostDetail />} />
-            <Route path="/create" element={<CreatePost />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+        <Nav.Link as={Link} to="/support" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-headset me-2"></i>Support</Nav.Link>
+      </Nav>
+      <div className="mt-auto">
+        <div className="mb-3">
+          <Button 
+            variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
+            size="sm" 
+            onClick={toggleTheme} 
+            className="w-100 mb-2"
+          >
+            <i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} me-2`}></i>
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </Button>
         </div>
+        {isAuthenticated ? (
+          <div>
+            <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2 small`}>
+              Welcome, {user?.displayName}!
+            </div>
+            <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={logout} className="w-100">
+              <i className="bi bi-box-arrow-right me-2"></i>
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Nav.Link as={Link} to="/login" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-box-arrow-in-right me-2"></i>Login</Nav.Link>
+            <Nav.Link as={Link} to="/register" className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}> <i className="bi bi-person-plus me-2"></i>Register</Nav.Link>
+          </div>
+        )}
       </div>
+    </div>
+  );
+};
 
-      {/* Following Sidebar - only show when authenticated */}
-      {isAuthenticated && <FollowingSidebar />}
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const { theme } = useTheme();
+  // Hide sidebar on login/register
+  const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
+
+  return (
+    <div data-theme={theme} style={{ width: '100%', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      {hideSidebar ? (
+        <Routes>
+          <Route path="/" element={<Feed />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/post/:id" element={<PostDetail />} />
+          <Route path="/create" element={<CreatePost />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      ) : (
+        <div className="d-flex flex-row justify-content-center align-items-start mx-auto" style={{ minHeight: '100vh', width: '100%', maxWidth: '1000px', margin: '0 auto', marginLeft: '4rem' }}>
+          <LeftSidebar />
+          <div style={{ maxWidth: '1400px', width: '100%', minHeight: '100vh' }}>
+            <Routes>
+              <Route path="/" element={<Feed />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/register" element={<AuthPage />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/post/:id" element={<PostDetail />} />
+              <Route path="/create" element={<CreatePost />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

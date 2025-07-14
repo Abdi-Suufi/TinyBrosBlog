@@ -38,7 +38,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
       <div style={{ maxWidth: '400px', width: '100%' }}>
         <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
           borderColor: theme === 'dark' ? 'var(--border)' : undefined,
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
                   style={{
                     backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
                     borderColor: theme === 'dark' ? 'var(--border)' : undefined,
-                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                    color: theme === 'dark' ? '#fff' : '#000'
                   }}
                 />
               </Form.Group>
@@ -76,7 +76,7 @@ const Login: React.FC = () => {
                   style={{
                     backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
                     borderColor: theme === 'dark' ? 'var(--border)' : undefined,
-                    color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                    color: theme === 'dark' ? '#fff' : '#000'
                   }}
                 />
               </Form.Group>

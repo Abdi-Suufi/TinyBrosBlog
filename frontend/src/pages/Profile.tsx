@@ -3,13 +3,16 @@ import { Container, Row, Col, Card, Button, Badge, Spinner, Alert, Tabs, Tab } f
 import { useParams, useNavigate } from 'react-router-dom';
 import { User, Post } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { userService } from '../services/userService';
 import PostCard from '../components/PostCard';
 import { getBackendAssetUrl } from '../utils/config';
+import HamsterLoader from '../components/HamsterLoader';
 
 const Profile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user: currentUser } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   
   const [user, setUser] = useState<User | null>(null);
@@ -180,13 +183,7 @@ const Profile: React.FC = () => {
 
   // Show loading spinner while auth is loading or profile is loading
   if (loading || (!currentUser && !id)) {
-    return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </Container>
-    );
+    return <HamsterLoader theme={theme} />;
   }
 
   if (error) {
@@ -210,7 +207,7 @@ const Profile: React.FC = () => {
       <Row>
         <Col>
           {/* Profile Header */}
-          <Card className="mb-4">
+          <Card className="mb-4" style={{ marginTop: '2rem' }}>
             <Card.Body>
               <Row>
                 <Col md={3} className="text-center">

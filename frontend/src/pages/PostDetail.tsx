@@ -7,10 +7,13 @@ import { postService } from '../services/postService';
 import { getBackendAssetUrl } from '../utils/config';
 import { formatDate, formatFullDate } from '../utils/dateUtils';
 import CommentItem from '../components/CommentItem';
+import HamsterLoader from '../components/HamsterLoader';
+import { useTheme } from '../context/ThemeContext';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   
   const [post, setPost] = useState<Post | null>(null);
@@ -109,13 +112,7 @@ const PostDetail: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </Container>
-    );
+    return <HamsterLoader theme={theme} />;
   }
 
   if (error) {
@@ -140,9 +137,9 @@ const PostDetail: React.FC = () => {
   return (
     <Container>
       <Row className="justify-content-center">
-        <Col lg={8}>
+        <Col lg={10} style={{ maxWidth: '1100px', margin: '0 auto' }}>
           {/* Post Header */}
-          <Card className="mb-4">
+          <Card className="mb-4" style={{ marginTop: '2rem' }}>
             <Card.Body>
               <div className="d-flex justify-content-between align-items-start mb-3">
                 <div className="d-flex align-items-center">
