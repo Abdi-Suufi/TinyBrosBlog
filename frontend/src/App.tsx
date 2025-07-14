@@ -4,8 +4,7 @@ import { Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Analytics } from "@vercel/analytics/react";
-import Login from './pages/Login';
-import Register from './pages/Register';
+import AuthPage from './pages/AuthPage';
 import Feed from './pages/Feed';
 import CreatePost from './pages/CreatePost';
 import Profile from './pages/Profile';
@@ -23,7 +22,7 @@ const AppContent: React.FC = () => {
   const [showSidebar, setShowSidebar] = React.useState(false);
 
   return (
-    <div className="d-flex">
+    <div className="d-flex" data-theme={theme}>
       {/* Mobile Toggle Button */}
       <Button 
         variant="dark" 
@@ -35,7 +34,7 @@ const AppContent: React.FC = () => {
       </Button>
 
       {/* Side Panel */}
-      <div className={`sidebar ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'} ${showSidebar ? 'show' : ''}`} style={{ width: '250px', minHeight: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
+      <div className={`sidebar ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'} ${showSidebar ? 'show' : ''}`} style={{ width: '250px', height: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
         <div className="p-3">
           <h4 className="mb-4">
             <Link to="/" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-decoration-none`}>TinyBrosBlog</Link>
@@ -131,7 +130,7 @@ const AppContent: React.FC = () => {
       </div>
       
       {/* Main Content */}
-      <div className="main-content" style={{ 
+      <div className={`main-content ${theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}`} style={{ 
         marginLeft: '250px', 
         marginRight: isAuthenticated ? '280px' : '0px',
         width: isAuthenticated ? 'calc(100% - 530px)' : 'calc(100% - 250px)', 
@@ -155,8 +154,8 @@ const AppContent: React.FC = () => {
         <div className="p-3">
           <Routes>
             <Route path="/" element={<Feed />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/register" element={<AuthPage />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/post/:id" element={<PostDetail />} />

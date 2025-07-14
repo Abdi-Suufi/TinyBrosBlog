@@ -16,13 +16,13 @@
   --warning-light: #ffc107;
   
   /* Dark theme variables */
-  --bg-primary-dark: #1a1a1a;
-  --bg-secondary-dark: #2d2d2d;
-  --bg-tertiary-dark: #404040;
+  --bg-primary-dark: #23272f;
+  --bg-secondary-dark: #1a202c;
+  --bg-tertiary-dark: #4a5568;
   --text-primary-dark: #ffffff;
-  --text-secondary-dark: #b0b0b0;
-  --text-muted-dark: #808080;
-  --border-dark: #404040;
+  --text-secondary-dark: #e2e8f0;
+  --text-muted-dark: #a0aec0;
+  --border-dark: #4a5568;
   --shadow-dark: rgba(0, 0, 0, 0.3);
   --accent-dark: #4dabf7;
   --success-dark: #51cf66;
@@ -60,8 +60,14 @@
   --warning: var(--warning-dark);
 }
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -92,6 +98,24 @@ h1, h2, h3, h4, h5, h6 {
 /* Ensure all text elements use theme colors */
 p, span, div, a {
   color: inherit;
+}
+
+/* Force theme application to all elements */
+[data-theme="dark"] {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="light"] {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure main content area follows theme */
+.main-content {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Override Bootstrap text utilities for theme compatibility */

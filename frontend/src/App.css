@@ -43,6 +43,9 @@
   transition: all 0.3s ease;
   background: var(--bg-secondary) !important;
   border-right: 1px solid var(--border);
+  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar .nav-link {
