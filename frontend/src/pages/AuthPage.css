@@ -6,7 +6,7 @@
   --auth-white: #f9f9f9;
   --auth-gray: #a0a5a8;
   --auth-black: #181818;
-  --auth-transition: 1.25s;
+  --auth-transition: 0.35s;
 }
 
 .auth-page-container[data-theme='dark'] {
