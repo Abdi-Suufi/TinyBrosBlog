@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AuthContextType, AuthUser } from '../types';
 import { authService } from '../services/authService';
+import HamsterLoader from '../components/HamsterLoader';
+import { useTheme } from './ThemeContext';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,6 +22,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -102,7 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <HamsterLoader theme={theme} />;
   }
 
   return (
