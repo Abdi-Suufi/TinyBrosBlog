@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './AuthPage.css';
+import { authService } from '../services/authService';
 
 const AuthPage: React.FC = () => {
   const { theme } = useTheme();
   const { login, register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Form state
   const [isSignUp, setIsSignUp] = useState(false);
@@ -35,6 +37,11 @@ const AuthPage: React.FC = () => {
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);
   }, [theme]);
+
+  // Set isSignUp based on route
+  useEffect(() => {
+    setIsSignUp(location.pathname === '/register');
+  }, [location.pathname]);
 
   // Switch animation
   const handleSwitch = () => {
@@ -90,6 +97,11 @@ const AuthPage: React.FC = () => {
     }
   };
 
+  // Google login handler
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/google`;
+  };
+
   // SVG Google icon
   const googleIcon = (
     <svg width="24" height="24" viewBox="0 0 48 48">
@@ -101,6 +113,13 @@ const AuthPage: React.FC = () => {
       </g>
     </svg>
   );
+
+  useEffect(() => {
+    // Handle Google OAuth callback
+    if (authService.handleGoogleCallback()) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   return (
     <div className="auth-page-container" data-theme={theme} style={{ 
@@ -117,7 +136,7 @@ const AuthPage: React.FC = () => {
         <div className={`container a-container${isSignUp ? ' is-txl' : ''}`} id="a-container" ref={aContainerRef}>
           <form className="form" onSubmit={handleRegisterSubmit} autoComplete="off">
             <h2 className="form_title title">Create Account</h2>
-            <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }}>
+            <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }} onClick={handleGoogleLogin}>
               {googleIcon}
             </button>
             <span className="form__span">or use email for registration</span>
@@ -134,7 +153,7 @@ const AuthPage: React.FC = () => {
         <div className={`container b-container${isSignUp ? ' is-txl is-z200' : ''}`} id="b-container" ref={bContainerRef}>
           <form className="form" onSubmit={handleLoginSubmit} autoComplete="off">
             <h2 className="form_title title">Sign in to Website</h2>
-            <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }}>
+            <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }} onClick={handleGoogleLogin}>
               {googleIcon}
             </button>
             <span className="form__span">or use your email account</span>

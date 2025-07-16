@@ -35,12 +35,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch (error) {
           // Token is invalid, clear stored data
           authService.logout();
+          setUser(null);
+          setToken(null);
         }
+      } else {
+        setUser(null);
+        setToken(null);
       }
       setLoading(false);
     };
 
     initializeAuth();
+  }, []);
+
+  // Add effect to update state after Google login
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const user = params.get('user');
+    if (token && user) {
+      setToken(token);
+      setUser(JSON.parse(decodeURIComponent(user)));
+    }
   }, []);
 
   const login = async (email: string, password: string) => {

@@ -61,6 +61,29 @@ A RESTful API for TinyBrosBlog - A food blog platform where users can share thei
 - **GET** `/api/auth/me`
 - **Headers:** `Authorization: Bearer <token>`
 
+#### Google OAuth Login
+
+#### Start Google Login
+- **GET** `/api/auth/google`
+- Redirects user to Google for authentication.
+
+#### Google OAuth Callback
+- **GET** `/api/auth/google/callback`
+- On success, returns:
+  ```json
+  {
+    "token": "<jwt_token>",
+    "user": {
+      "id": "...",
+      "username": "...",
+      "email": "...",
+      "displayName": "...",
+      "profilePicture": "..."
+    }
+  }
+  ```
+- On failure, redirects to `/`.
+
 ### Posts
 
 #### Create Post

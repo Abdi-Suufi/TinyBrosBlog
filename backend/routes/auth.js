@@ -2,6 +2,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const router = express.Router();
 
@@ -103,6 +105,60 @@ router.get('/me', auth, async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
+});
+
+// Google OAuth setup
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ email: profile.emails[0].value });
+    if (!user) {
+      user = new User({
+        username: profile.emails[0].value.split('@')[0],
+        email: profile.emails[0].value,
+        password: Math.random().toString(36).slice(-8), // random password
+        displayName: profile.displayName,
+        profilePicture: profile.photos[0]?.value || null
+      });
+      await user.save();
+    }
+    return done(null, user);
+  } catch (err) {
+    return done(err, null);
+  }
+}));
+
+// Serialize/deserialize (not used for JWT, but required by passport)
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id);
+  done(null, user);
+});
+
+// Google OAuth routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/' }), async (req, res) => {
+  // Issue JWT and send user info
+  const user = req.user;
+  const token = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+  // Redirect to frontend with token and user info as query params
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000/login';
+  const userParam = encodeURIComponent(JSON.stringify({
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    displayName: user.displayName,
+    profilePicture: user.profilePicture
+  }));
+  res.redirect(`${frontendUrl}?token=${token}&user=${userParam}`);
 });
 
 module.exports = router; 

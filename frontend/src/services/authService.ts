@@ -34,5 +34,20 @@ export const authService = {
   setAuthData(token: string, user: AuthUser): void {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
+  },
+
+  // Handle Google OAuth callback
+  handleGoogleCallback(): boolean {
+    // Check if token and user are in the URL as query params
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const user = params.get('user');
+    if (token && user) {
+      this.setAuthData(token, JSON.parse(decodeURIComponent(user)));
+      // Remove token and user from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return true;
+    }
+    return false;
   }
 }; 
