@@ -18,6 +18,7 @@ const Feed: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const [sortType, setSortType] = useState<'feed' | 'following'>('feed');
+  const { user } = useAuth();
 
   const fetchPosts = async (page: number = 1, type: 'feed' | 'following' = sortType) => {
     try {
@@ -132,30 +133,32 @@ const Feed: React.FC = () => {
               <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} small`} style={{ marginRight: '1rem' }}>
                 {totalPosts} posts
               </div>
-              <Dropdown>
-                <Dropdown.Toggle
-                  variant="link"
-                  id="sort-dropdown"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    background: 'transparent',
-                    border: 'none',
-                    boxShadow: 'none',
-                    color: theme === 'dark' ? '#fff' : '#212529',
-                    textDecoration: 'none',
-                    padding: 0,
-                    fontWeight: 500
-                  }}
-                >
-                  <span style={{ marginRight: 6 }}>Sort</span>
-                  <span style={{ fontWeight: 700 }}>{sortType === 'feed' ? 'Feed' : 'Following'}</span>
-                </Dropdown.Toggle>
-                <Dropdown.Menu align="end" style={{ backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff' }}>
-                  <Dropdown.Item active={sortType === 'feed'} style={{ color: theme === 'dark' ? '#fff' : undefined }} onClick={() => handleSortChange('feed')}>Feed</Dropdown.Item>
-                  <Dropdown.Item active={sortType === 'following'} style={{ color: theme === 'dark' ? '#fff' : undefined }} onClick={() => handleSortChange('following')}>Following</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+              {user && (
+                <Dropdown>
+                  <Dropdown.Toggle
+                    variant="link"
+                    id="sort-dropdown"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      background: 'transparent',
+                      border: 'none',
+                      boxShadow: 'none',
+                      color: theme === 'dark' ? '#fff' : '#212529',
+                      textDecoration: 'none',
+                      padding: 0,
+                      fontWeight: 500
+                    }}
+                  >
+                    <span style={{ marginRight: 6 }}>Sort</span>
+                    <span style={{ fontWeight: 700 }}>{sortType === 'feed' ? 'Feed' : 'Following'}</span>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu align="end" style={{ backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff' }}>
+                    <Dropdown.Item active={sortType === 'feed'} style={{ color: theme === 'dark' ? '#fff' : undefined }} onClick={() => handleSortChange('feed')}>Feed</Dropdown.Item>
+                    <Dropdown.Item active={sortType === 'following'} style={{ color: theme === 'dark' ? '#fff' : undefined }} onClick={() => handleSortChange('following')}>Following</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              )}
             </div>
           </div>
 
