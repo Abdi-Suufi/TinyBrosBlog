@@ -17,12 +17,18 @@ const Feed: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
+  const [sortType, setSortType] = useState<'feed' | 'following'>('feed');
 
-  const fetchPosts = async (page: number = 1) => {
+  const fetchPosts = async (page: number = 1, type: 'feed' | 'following' = sortType) => {
     try {
       setLoading(true);
       setError('');
-      const data = await postService.getPosts(page, 10);
+      let data;
+      if (type === 'feed') {
+        data = await postService.getPosts(page, 10);
+      } else {
+        data = await postService.getUserFeed(page, 10);
+      }
       setPosts(data.posts);
       setCurrentPage(data.currentPage);
       setTotalPages(data.totalPages);
@@ -35,12 +41,18 @@ const Feed: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPosts(1, sortType);
+    // eslint-disable-next-line
+  }, [sortType]);
+
+  const handleSortChange = (type: 'feed' | 'following') => {
+    setSortType(type);
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchPosts(page);
+    fetchPosts(page, sortType);
   };
 
   const handlePostUpdate = (updatedPost: Post) => {
@@ -137,10 +149,11 @@ const Feed: React.FC = () => {
                   }}
                 >
                   <span style={{ marginRight: 6 }}>Sort</span>
+                  <span style={{ fontWeight: 700 }}>{sortType === 'feed' ? 'Feed' : 'Following'}</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu align="end" style={{ backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff' }}>
-                  <Dropdown.Item style={{ color: theme === 'dark' ? '#fff' : undefined }}>Feed</Dropdown.Item>
-                  <Dropdown.Item style={{ color: theme === 'dark' ? '#fff' : undefined }}>Following</Dropdown.Item>
+                  <Dropdown.Item active={sortType === 'feed'} style={{ color: theme === 'dark' ? '#fff' : undefined }} onClick={() => handleSortChange('feed')}>Feed</Dropdown.Item>
+                  <Dropdown.Item active={sortType === 'following'} style={{ color: theme === 'dark' ? '#fff' : undefined }} onClick={() => handleSortChange('following')}>Following</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
