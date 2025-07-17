@@ -264,6 +264,4 @@ router.put('/:id/follow', auth, async (req, res) => {
   }
 });
 
-
-
 module.exports = router; 
