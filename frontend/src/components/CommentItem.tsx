@@ -17,7 +17,7 @@ interface CommentItemProps {
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpdate, onCommentDelete, isAuthor }) => {
-  const { user } = useAuth();
+  const { user, onlineUsers } = useAuth();
   const { theme } = useTheme();
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -82,16 +82,49 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpd
   return (
     <div className="mb-3">
       <div className="d-flex align-items-start">
-        <img
-          src={profilePictureUrl}
-          alt={comment.user.displayName || 'User'}
-          className="rounded-circle me-2"
-          style={{ width: '32px', height: '32px', objectFit: 'cover' }}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = 'https://via.placeholder.com/32/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
-          }}
-        />
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <img
+            src={profilePictureUrl}
+            alt={comment.user.displayName || 'User'}
+            className="rounded-circle me-2"
+            style={{ width: '32px', height: '32px', objectFit: 'cover' }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = 'https://via.placeholder.com/32/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
+            }}
+          />
+          {onlineUsers && onlineUsers.includes(comment.user._id) ? (
+            <span
+              style={{
+                position: 'absolute',
+                bottom: 2,
+                right: 4,
+                width: 10,
+                height: 10,
+                background: '#4caf50',
+                border: '2px solid #fff',
+                borderRadius: '50%',
+                zIndex: 2,
+                display: 'block',
+              }}
+            />
+          ) : (
+            <span
+              style={{
+                position: 'absolute',
+                bottom: 2,
+                right: 4,
+                width: 10,
+                height: 10,
+                background: '#bdbdbd',
+                border: '2px solid #fff',
+                borderRadius: '50%',
+                zIndex: 2,
+                display: 'block',
+              }}
+            />
+          )}
+        </div>
         <div className="flex-grow-1">
           <div className="d-flex justify-content-between align-items-start">
             <div className="flex-grow-1">

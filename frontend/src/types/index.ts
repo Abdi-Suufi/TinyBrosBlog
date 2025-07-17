@@ -61,6 +61,7 @@ export interface AuthContextType {
   register: (username: string, email: string, password: string, displayName: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  onlineUsers: string[];
 }
 
 export interface LoginFormData {

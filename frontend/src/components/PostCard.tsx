@@ -16,7 +16,7 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete }) => {
-  const { user } = useAuth();
+  const { user, onlineUsers } = useAuth();
   const { theme } = useTheme();
   const [commentText, setCommentText] = useState('');
   const [showComments, setShowComments] = useState(false);
@@ -89,18 +89,51 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center p-2 border-bottom">
         <div className="d-flex align-items-center">
-          <img
-            src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://via.placeholder.com/32'}
-            alt={post.author.displayName}
-            className="rounded-circle me-2"
-            style={{ width: '32px', height: '32px', objectFit: 'cover' }}
-            onError={(e) => {
-              console.error('Profile picture failed to load:', post.author.profilePicture, 'Processed URL:', post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : '');
-            }}
-            onLoad={() => {
-              console.log('Profile picture loaded successfully:', post.author.profilePicture, 'Processed URL:', post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : '');
-            }}
-          />
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <img
+              src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://via.placeholder.com/32'}
+              alt={post.author.displayName}
+              className="rounded-circle me-2"
+              style={{ width: '32px', height: '32px', objectFit: 'cover' }}
+              onError={(e) => {
+                console.error('Profile picture failed to load:', post.author.profilePicture, 'Processed URL:', post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : '');
+              }}
+              onLoad={() => {
+                console.log('Profile picture loaded successfully:', post.author.profilePicture, 'Processed URL:', post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : '');
+              }}
+            />
+            {onlineUsers && onlineUsers.includes(post.author._id) ? (
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: 2,
+                  right: 4,
+                  width: 10,
+                  height: 10,
+                  background: '#4caf50',
+                  border: '2px solid #fff',
+                  borderRadius: '50%',
+                  zIndex: 2,
+                  display: 'block',
+                }}
+              />
+            ) : (
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: 2,
+                  right: 4,
+                  width: 10,
+                  height: 10,
+                  background: '#bdbdbd',
+                  border: '2px solid #fff',
+                  borderRadius: '50%',
+                  zIndex: 2,
+                  display: 'block',
+                }}
+              />
+            )}
+          </div>
           <div>
                     <Link to={`/profile/${post.author._id}`} className="text-decoration-none">
           <div className={`fw-bold small ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>{post.author.displayName}</div>

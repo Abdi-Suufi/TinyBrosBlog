@@ -3,6 +3,7 @@ import { AuthContextType, AuthUser } from '../types';
 import { authService } from '../services/authService';
 import HamsterLoader from '../components/HamsterLoader';
 import { useTheme } from './ThemeContext';
+import { io, Socket } from 'socket.io-client';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -23,6 +24,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -61,6 +64,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(JSON.parse(decodeURIComponent(user)));
     }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      // Connect socket.io when user is logged in
+      const socketUrl = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
+      const newSocket = io(socketUrl);
+      setSocket(newSocket);
+      newSocket.emit('user_connected', user.id);
+      newSocket.on('online_users', (users: string[]) => {
+        setOnlineUsers(users);
+      });
+      return () => {
+        newSocket.disconnect();
+      };
+    } else {
+      setOnlineUsers([]);
+      if (socket) {
+        socket.disconnect();
+      }
+    }
+    // eslint-disable-next-line
+  }, [user]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -102,6 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     isAuthenticated: !!user && !!token,
+    onlineUsers,
   };
 
   if (loading) {

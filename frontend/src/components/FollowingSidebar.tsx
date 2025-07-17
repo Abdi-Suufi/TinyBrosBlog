@@ -8,7 +8,7 @@ import { User } from '../types';
 import { getBackendAssetUrl } from '../utils/config';
 
 const FollowingSidebar: React.FC = () => {
-  const { user } = useAuth();
+  const { user, onlineUsers } = useAuth();
   const { theme } = useTheme();
   const [following, setFollowing] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,12 +90,45 @@ const FollowingSidebar: React.FC = () => {
                     to={`/profile/${followedUser._id}`} 
                     className="text-decoration-none d-flex align-items-center"
                   >
-                    <img
-                      src={followedUser.profilePicture ? getBackendAssetUrl(followedUser.profilePicture) : 'https://via.placeholder.com/40'}
-                      alt={followedUser.displayName}
-                      className="rounded-circle me-3"
-                      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                    />
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <img
+                        src={followedUser.profilePicture ? getBackendAssetUrl(followedUser.profilePicture) : 'https://via.placeholder.com/40'}
+                        alt={followedUser.displayName}
+                        className="rounded-circle me-3"
+                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                      />
+                      {onlineUsers && onlineUsers.includes(followedUser._id) ? (
+                        <span
+                          style={{
+                            position: 'absolute',
+                            bottom: 2,
+                            right: 6,
+                            width: 12,
+                            height: 12,
+                            background: '#4caf50',
+                            border: '2px solid #fff',
+                            borderRadius: '50%',
+                            zIndex: 2,
+                            display: 'block',
+                          }}
+                        />
+                      ) : (
+                        <span
+                          style={{
+                            position: 'absolute',
+                            bottom: 2,
+                            right: 6,
+                            width: 12,
+                            height: 12,
+                            background: '#bdbdbd',
+                            border: '2px solid #fff',
+                            borderRadius: '50%',
+                            zIndex: 2,
+                            display: 'block',
+                          }}
+                        />
+                      )}
+                    </div>
                     <div className="flex-grow-1">
                       <div className={`fw-bold ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
                         {followedUser.displayName}

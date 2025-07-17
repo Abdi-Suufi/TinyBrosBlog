@@ -11,7 +11,7 @@ import HamsterLoader from '../components/HamsterLoader';
 
 const Profile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, onlineUsers } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
   
@@ -211,12 +211,45 @@ const Profile: React.FC = () => {
             <Card.Body>
               <Row>
                 <Col md={3} className="text-center">
-                  <img
-                    src={user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://via.placeholder.com/150'}
-                    alt={user.displayName}
-                    className="rounded-circle mb-3"
-                    style={{ width: '150px', height: '150px', objectFit: 'cover' }}
-                  />
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <img
+                      src={user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://via.placeholder.com/150'}
+                      alt={user.displayName}
+                      className="rounded-circle mb-3"
+                      style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                    />
+                    {onlineUsers && onlineUsers.includes(user._id) ? (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          bottom: 10,
+                          right: 18,
+                          width: 24,
+                          height: 24,
+                          background: '#4caf50',
+                          border: '3px solid #fff',
+                          borderRadius: '50%',
+                          zIndex: 2,
+                          display: 'block',
+                        }}
+                      />
+                    ) : (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          bottom: 10,
+                          right: 18,
+                          width: 24,
+                          height: 24,
+                          background: '#bdbdbd',
+                          border: '3px solid #fff',
+                          borderRadius: '50%',
+                          zIndex: 2,
+                          display: 'block',
+                        }}
+                      />
+                    )}
+                  </div>
                 </Col>
                 <Col md={9}>
                   <div className="d-flex justify-content-between align-items-start">
