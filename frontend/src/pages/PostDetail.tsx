@@ -144,7 +144,7 @@ const PostDetail: React.FC = () => {
               <div className="d-flex justify-content-between align-items-start mb-3">
                 <div className="d-flex align-items-center">
                   <img
-                    src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://via.placeholder.com/50'}
+                    src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://placehold.co/600x400'}
                     alt={post.author.displayName}
                     className="rounded-circle me-3"
                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}

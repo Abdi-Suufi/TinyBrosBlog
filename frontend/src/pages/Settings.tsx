@@ -113,7 +113,7 @@ const Settings: React.FC = () => {
                     <img
                       src={
                         profilePicturePreview || 
-                        (user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://via.placeholder.com/150')
+                        (user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://placehold.co/600x400')
                       }
                       alt="Profile"
                       className="rounded-circle mb-3"

@@ -77,7 +77,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpd
 
   const profilePictureUrl = comment.user.profilePicture 
     ? getBackendAssetUrl(comment.user.profilePicture)
-    : 'https://via.placeholder.com/32/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
+    : 'https://placehold.co/600x400';
 
   return (
     <div className="mb-3">
@@ -90,7 +90,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onCommentUpd
             style={{ width: '32px', height: '32px', objectFit: 'cover' }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = 'https://via.placeholder.com/32/6c757d/ffffff?text=' + (comment.user.displayName?.charAt(0) || 'U');
+              target.src = 'https://placehold.co/600x400';
             }}
           />
           {onlineUsers && onlineUsers.includes(comment.user._id) ? (
@@ -279,7 +279,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, postId, commentId, onReply
 
   const profilePictureUrl = reply.user.profilePicture 
     ? getBackendAssetUrl(reply.user.profilePicture)
-    : 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (reply.user.displayName?.charAt(0) || 'U');
+    : 'https://placehold.co/600x400';
 
   return (
     <div className="d-flex align-items-start mb-2">
@@ -290,7 +290,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, postId, commentId, onReply
         style={{ width: '24px', height: '24px', objectFit: 'cover' }}
         onError={(e) => {
           const target = e.target as HTMLImageElement;
-          target.src = 'https://via.placeholder.com/24/6c757d/ffffff?text=' + (reply.user.displayName?.charAt(0) || 'U');
+          target.src = 'https://placehold.co/600x400';
         }}
       />
       <div className="flex-grow-1">

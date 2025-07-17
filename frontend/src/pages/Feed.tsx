@@ -232,7 +232,7 @@ const Feed: React.FC = () => {
                       <div className="d-flex align-items-center mb-2">
                         <Link to={`/profile/${u._id}`} className="d-flex align-items-center text-decoration-none me-2">
                           <img
-                            src={u.profilePicture ? getBackendAssetUrl(u.profilePicture) : 'https://via.placeholder.com/40'}
+                            src={u.profilePicture ? getBackendAssetUrl(u.profilePicture) : 'https://placehold.co/600x400'}
                             alt={u.displayName}
                             className="rounded-circle"
                             style={{ width: 40, height: 40, objectFit: 'cover' }}

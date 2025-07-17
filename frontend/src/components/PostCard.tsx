@@ -91,7 +91,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate, onPostDelete })
         <div className="d-flex align-items-center">
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <img
-              src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://via.placeholder.com/32'}
+              src={post.author.profilePicture ? getBackendAssetUrl(post.author.profilePicture) : 'https://placehold.co/600x400'}
               alt={post.author.displayName}
               className="rounded-circle me-2"
               style={{ width: '32px', height: '32px', objectFit: 'cover' }}

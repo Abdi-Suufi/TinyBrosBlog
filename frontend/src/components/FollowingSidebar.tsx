@@ -92,7 +92,7 @@ const FollowingSidebar: React.FC = () => {
                   >
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                       <img
-                        src={followedUser.profilePicture ? getBackendAssetUrl(followedUser.profilePicture) : 'https://via.placeholder.com/40'}
+                        src={followedUser.profilePicture ? getBackendAssetUrl(followedUser.profilePicture) : 'https://placehold.co/600x400'}
                         alt={followedUser.displayName}
                         className="rounded-circle me-3"
                         style={{ width: '40px', height: '40px', objectFit: 'cover' }}

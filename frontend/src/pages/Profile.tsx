@@ -219,7 +219,7 @@ const Profile: React.FC = () => {
                 <Col md={3} className="text-center">
                   <div style={{ position: 'relative', display: 'inline-block' }}>
                     <img
-                      src={user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://via.placeholder.com/150'}
+                      src={user.profilePicture ? getBackendAssetUrl(user.profilePicture) : 'https://placehold.co/400'}
                       alt={user.displayName}
                       className="rounded-circle mb-3"
                       style={{ width: '150px', height: '150px', objectFit: 'cover' }}
@@ -361,7 +361,7 @@ const Profile: React.FC = () => {
                       {followersData.map((follower) => (
                         <div key={follower._id} className="d-flex align-items-center mb-3 p-2 border rounded">
                           <img
-                            src={follower.profilePicture ? getBackendAssetUrl(follower.profilePicture) : 'https://via.placeholder.com/40'}
+                            src={follower.profilePicture ? getBackendAssetUrl(follower.profilePicture) : 'https://placehold.co/600x400'}
                             alt={follower.displayName}
                             className="rounded-circle me-3"
                             style={{ width: '40px', height: '40px', objectFit: 'cover' }}
@@ -400,7 +400,7 @@ const Profile: React.FC = () => {
                       {followingData.map((followingUser) => (
                         <div key={followingUser._id} className="d-flex align-items-center mb-3 p-2 border rounded">
                           <img
-                            src={followingUser.profilePicture ? getBackendAssetUrl(followingUser.profilePicture) : 'https://via.placeholder.com/40'}
+                            src={followingUser.profilePicture ? getBackendAssetUrl(followingUser.profilePicture) : 'https://placehold.co/600x400'}
                             alt={followingUser.displayName}
                             className="rounded-circle me-3"
                             style={{ width: '40px', height: '40px', objectFit: 'cover' }}
