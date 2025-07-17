@@ -11,7 +11,7 @@ import HamsterLoader from '../components/HamsterLoader';
 
 const Profile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { user: currentUser, onlineUsers } = useAuth();
+  const { user: currentUser, onlineUsers, logout } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
   
@@ -180,6 +180,12 @@ const Profile: React.FC = () => {
     user.followers.some(follower => 
       typeof follower === 'string' ? follower === currentUser.id : follower._id === currentUser.id
     ) : false;
+
+  // Handler for logout that redirects to feed
+  const handleLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
 
   // Show loading spinner while auth is loading or profile is loading
   if (loading || (!currentUser && !id)) {

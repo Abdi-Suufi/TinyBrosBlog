@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -19,6 +19,12 @@ import './App.css';
 const LeftSidebar: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleSidebarLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
 
   return (
     <div
@@ -77,7 +83,7 @@ const LeftSidebar: React.FC = () => {
             <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2 small`}>
               Welcome, {user?.displayName}!
             </div>
-            <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={logout} className="w-100">
+            <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={handleSidebarLogout} className="w-100">
               <i className="bi bi-box-arrow-right me-2"></i>
               Logout
             </Button>
