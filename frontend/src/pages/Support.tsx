@@ -63,13 +63,12 @@ const Support: React.FC = () => {
 
   return (
     <Container className="d-flex justify-content-center" style={{ minHeight: '80vh' }}>
-      <div style={{ maxWidth: '800px', width: '100%' }}>
+      <div style={{ maxWidth: '800px', width: '100%', marginTop: '2rem' }}>
         <Row>
           <Col lg={8}>
             <Card className={theme === 'dark' ? 'bg-dark text-white' : ''} style={{
               borderColor: theme === 'dark' ? 'var(--border)' : undefined,
-              backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined,
-              marginTop: '2rem',
+              backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined
             }}>
               <Card.Body>
                 <h2 className={`text-center mb-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
