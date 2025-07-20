@@ -42,7 +42,7 @@ const FollowingSidebar: React.FC = () => {
 
   return (
     <div className="following-sidebar" style={{ 
-      width: '280px', 
+      width: '340px', 
       padding: '1rem',
       marginTop: '6.5rem',
       backgroundColor: theme === 'dark' ? '#23272f' : '#ffffff',
