@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Container, Nav, Button, Offcanvas } from 'react-bootstrap';
+import { Nav, Button } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Analytics } from "@vercel/analytics/react";
@@ -11,7 +11,10 @@ import Profile from './pages/Profile';
 import PostDetail from './pages/PostDetail';
 import Settings from './pages/Settings';
 import Support from './pages/Support';
-import FollowingSidebar from './components/FollowingSidebar';
+import AboutUs from './pages/AboutUs';
+import ContactUs from './pages/ContactUs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
@@ -65,6 +68,9 @@ const LeftSidebar: React.FC = () => {
           </>
         )}
         <Nav.Link as={Link} to="/support" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-headset me-2"></i>Support</Nav.Link>
+        <Nav.Link as={Link} to="/about" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-info-circle me-2"></i>About Us</Nav.Link>
+        <Nav.Link as={Link} to="/contact" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-chat-dots me-2"></i>Contact Us</Nav.Link>
+        <Nav.Link as={Link} to="/privacy" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-shield-check me-2"></i>Privacy Policy</Nav.Link>
       </Nav>
       <div className="mt-auto">
         <div className="mb-3">
@@ -118,6 +124,9 @@ const AppContent: React.FC = () => {
           <Route path="/create" element={<CreatePost />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       ) : (
@@ -131,10 +140,13 @@ const AppContent: React.FC = () => {
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/post/:id" element={<PostDetail />} />
-              <Route path="/create" element={<CreatePost />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="*" element={<Navigate to="/" />} />
+                        <Route path="/create" element={<CreatePost />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
         </div>
