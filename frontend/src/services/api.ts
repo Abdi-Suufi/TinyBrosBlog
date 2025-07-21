@@ -36,4 +36,7 @@ api.interceptors.response.use(
   }
 );
 
-export default api; 
+export default api;
+
+export const sendSupportMessage = (data: any) => api.post('/support', data);
+export const getSupportMessages = () => api.get('/support'); 

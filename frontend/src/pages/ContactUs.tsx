@@ -35,7 +35,6 @@ const ContactUs: React.FC = () => {
       // Simulate sending contact form
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // In a real app, you would send this to your backend
       console.log('Contact form submission:', formData);
       
       setSuccess('Thank you for your message! We will get back to you within 24 hours.');

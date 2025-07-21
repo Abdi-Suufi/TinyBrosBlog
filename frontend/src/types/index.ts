@@ -52,6 +52,7 @@ export interface AuthUser {
   email: string;
   displayName: string;
   profilePicture?: string;
+  role?: string;
 }
 
 export interface AuthContextType {
