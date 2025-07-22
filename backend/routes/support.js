@@ -42,4 +42,26 @@ router.get('/', auth, requireAdmin, async (req, res) => {
   }
 });
 
+// PATCH /api/support/:id/status - Admin: Update status of a support message
+router.patch('/:id/status', auth, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!['open', 'in progress', 'closed'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value.' });
+    }
+    const message = await SupportMessage.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    if (!message) {
+      return res.status(404).json({ message: 'Support message not found.' });
+    }
+    res.json(message);
+  } catch (err) {
+    console.error('Update status error:', err);
+    res.status(500).json({ message: 'Failed to update status.' });
+  }
+});
+
 module.exports = router; 

@@ -7,6 +7,7 @@ const SupportMessageSchema = new mongoose.Schema({
   message: { type: String, required: true },
   category: { type: String, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  status: { type: String, enum: ['open', 'in progress', 'closed'], default: 'open' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('SupportMessage', SupportMessageSchema); 

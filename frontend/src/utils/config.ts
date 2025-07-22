@@ -1,5 +1,5 @@
 // Backend URL configuration
-export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://tinybrosblog.onrender.com';
+export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Helper function to get full URL for backend assets (images, etc.)
 export const getBackendAssetUrl = (path: string): string => {
