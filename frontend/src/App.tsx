@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Nav, Button } from 'react-bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -72,9 +72,6 @@ const LeftSidebar: React.FC = () => {
         <Nav.Link as={Link} to="/about" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-info-circle me-2"></i>About Us</Nav.Link>
         <Nav.Link as={Link} to="/contact" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-chat-dots me-2"></i>Contact Us</Nav.Link>
         <Nav.Link as={Link} to="/privacy" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-shield-check me-2"></i>Privacy Policy</Nav.Link>
-        {user?.role === 'admin' && (
-          <Nav.Link as={Link} to="/admin/contacts" className={`${theme === 'dark' ? 'text-warning' : 'text-warning'} mb-2`}><i className="bi bi-inbox me-2"></i>Admin: Support Messages</Nav.Link>
-        )}
       </Nav>
       <div className="mt-auto">
         <div className="mb-3">
@@ -109,14 +106,139 @@ const LeftSidebar: React.FC = () => {
   );
 };
 
+const MobileSidebar: React.FC<{ show: boolean; onClose: () => void }> = ({ show, onClose }) => {
+  const { user, logout, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleSidebarLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+    onClose();
+  };
+
+  return (
+    <>
+      <div
+        className={`mobile-sidebar-overlay${show ? ' show' : ''}`}
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.35)',
+          zIndex: 2000,
+          display: show ? 'block' : 'none',
+        }}
+      />
+      <div
+        className={`mobile-sidebar${show ? ' show' : ''}`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: show ? 0 : '-260px',
+          width: '250px',
+          height: '100vh',
+          background: theme === 'dark' ? '#23272f' : '#fff',
+          zIndex: 2100,
+          boxShadow: '2px 0 16px rgba(0,0,0,0.12)',
+          transition: 'left 0.3s ease',
+          padding: '1.5rem 1rem',
+          overflowY: 'auto',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <Link to="/" className="text-decoration-none sidebar-title-link" style={{ color: theme === 'dark' ? '#fff' : '#23272f', fontWeight: 700, fontSize: '1.2rem' }}>
+            Tiny <span style={{ color: 'var(--accent)' }}>bros</span> blog
+          </Link>
+          <Button variant="link" size="sm" onClick={onClose} style={{ color: theme === 'dark' ? '#fff' : '#23272f' }}>
+            <i className="bi bi-x-lg" style={{ fontSize: '1.3rem' }}></i>
+          </Button>
+        </div>
+        <Nav className="flex-column mb-4">
+          <Nav.Link as={Link} to="/" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-house-door me-2"></i>Feed</Nav.Link>
+          {isAuthenticated && (
+            <>
+              <Nav.Link as={Link} to="/create" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-plus-circle me-2"></i>Create Post</Nav.Link>
+              <Nav.Link as={Link} to="/profile" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-person me-2"></i>Profile</Nav.Link>
+              <Nav.Link as={Link} to="/settings" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-gear me-2"></i>Settings</Nav.Link>
+            </>
+          )}
+          <Nav.Link as={Link} to="/support" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-headset me-2"></i>Support</Nav.Link>
+          <Nav.Link as={Link} to="/about" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-info-circle me-2"></i>About Us</Nav.Link>
+          <Nav.Link as={Link} to="/contact" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-chat-dots me-2"></i>Contact Us</Nav.Link>
+          <Nav.Link as={Link} to="/privacy" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-shield-check me-2"></i>Privacy Policy</Nav.Link>
+          {user?.role === 'admin' && (
+            <Nav.Link as={Link} to="/admin/contacts" onClick={onClose} className={`${theme === 'dark' ? 'text-warning' : 'text-warning'} mb-2`}><i className="bi bi-inbox me-2"></i>Admin: Support Messages</Nav.Link>
+          )}
+        </Nav>
+        <div className="mb-3">
+          <Button 
+            variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
+            size="sm" 
+            onClick={() => { toggleTheme(); onClose(); }} 
+            className="w-100 mb-2"
+          >
+            <i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} me-2`}></i>
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </Button>
+        </div>
+        {isAuthenticated ? (
+          <div>
+            <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2 small`}>
+              Welcome, {user?.displayName}!
+            </div>
+            <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={handleSidebarLogout} className="w-100">
+              <i className="bi bi-box-arrow-right me-2"></i>
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Nav.Link as={Link} to="/login" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-box-arrow-in-right me-2"></i>Login</Nav.Link>
+            <Nav.Link as={Link} to="/register" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}> <i className="bi bi-person-plus me-2"></i>Register</Nav.Link>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+
 const AppContent: React.FC = () => {
   const location = useLocation();
   const { theme } = useTheme();
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   // Hide sidebar on login/register
   const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <div data-theme={theme} style={{ width: '100%', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      {/* Hamburger for mobile */}
+      {!hideSidebar && !mobileSidebarOpen && (
+        <button
+          className="hamburger-menu d-lg-none"
+          style={{
+            position: 'fixed',
+            top: 18,
+            left: 18,
+            zIndex: 2200,
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            margin: 0,
+            outline: 'none',
+            cursor: 'pointer',
+          }}
+          aria-label="Open navigation menu"
+          onClick={() => setMobileSidebarOpen(true)}
+        >
+          <i className="bi bi-list" style={{ fontSize: '2rem', color: 'var(--accent, #4dabf7)' }}></i>
+        </button>
+      )}
+      <MobileSidebar show={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
       {hideSidebar ? (
         <Routes>
           <Route path="/" element={<Feed />} />

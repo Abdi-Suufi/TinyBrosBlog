@@ -281,3 +281,52 @@
   overflow-y: auto;
   /* keep existing styles */
 }
+
+/* --- Mobile Sidebar Styles --- */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 250px;
+  height: 100vh;
+  background: #fff;
+  z-index: 2100;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.12);
+  transition: left 0.3s cubic-bezier(.4,2,.6,1);
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+.mobile-sidebar.show {
+  left: 0;
+}
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.35);
+  z-index: 2000;
+  display: none;
+}
+.mobile-sidebar-overlay.show {
+  display: block;
+}
+.hamburger-menu {
+  display: block;
+}
+@media (min-width: 992px) {
+  .mobile-sidebar,
+  .mobile-sidebar-overlay,
+  .hamburger-menu {
+    display: none !important;
+  }
+}
+@media (max-width: 991.98px) {
+  .left-sidebar {
+    display: none !important;
+  }
+  .feed-search-bar-wrapper {
+    padding-left: 56px !important;
+  }
+}

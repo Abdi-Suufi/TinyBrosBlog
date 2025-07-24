@@ -199,7 +199,15 @@ const Feed: React.FC = () => {
           style={{ maxWidth: '1100px', width: '100%', minHeight: '100vh', zIndex: 1 }}
         >
           {/* Search bar */}
-          <div className="w-100 position-relative" style={{ maxWidth: '1100px', marginTop: '2rem', marginBottom: '0.5rem' }}>
+          <div 
+            className="w-100 position-relative feed-search-bar-wrapper"
+            style={{ 
+              maxWidth: '1100px', 
+              marginTop: '2rem', 
+              marginBottom: '0.5rem',
+              paddingLeft: '0',
+            }}
+          >
             <input
               type="text"
               className="form-control"
