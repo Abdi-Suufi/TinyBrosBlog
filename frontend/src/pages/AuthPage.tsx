@@ -1,9 +1,113 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './AuthPage.css';
 import { authService } from '../services/authService';
+import { Nav, Button } from 'react-bootstrap';
+
+// Copy MobileSidebar from App.tsx for reuse
+const MobileSidebar: React.FC<{ show: boolean; onClose: () => void; setIsSignUp: (v: boolean) => void }> = ({ show, onClose, setIsSignUp }) => {
+  const { user, logout, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleSidebarLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+    onClose();
+  };
+
+  return (
+    <>
+      <div
+        className={`mobile-sidebar-overlay${show ? ' show' : ''}`}
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.35)',
+          zIndex: 2000,
+          display: show ? 'block' : 'none',
+        }}
+      />
+      <div
+        className={`mobile-sidebar${show ? ' show' : ''}`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: show ? 0 : '-260px',
+          width: '250px',
+          height: '100vh',
+          background: theme === 'dark' ? '#23272f' : '#fff',
+          zIndex: 2100,
+          boxShadow: '2px 0 16px rgba(0,0,0,0.12)',
+          transition: 'left 0.3s ease',
+          padding: '1.5rem 1rem',
+          overflowY: 'auto',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <Link to="/" className="text-decoration-none sidebar-title-link" style={{ color: theme === 'dark' ? '#fff' : '#23272f', fontWeight: 700, fontSize: '1.2rem' }}>
+            Tiny <span style={{ color: 'var(--accent)' }}>bros</span> blog
+          </Link>
+          <Button variant="link" size="sm" onClick={onClose} style={{ color: theme === 'dark' ? '#fff' : '#23272f' }}>
+            <i className="bi bi-x-lg" style={{ fontSize: '1.3rem' }}></i>
+          </Button>
+        </div>
+        <Nav className="flex-column mb-4">
+          <Nav.Link as={Link} to="/" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-house-door me-2"></i>Feed</Nav.Link>
+          {isAuthenticated && (
+            <>
+              <Nav.Link as={Link} to="/create" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-plus-circle me-2"></i>Create Post</Nav.Link>
+              <Nav.Link as={Link} to="/profile" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-person me-2"></i>Profile</Nav.Link>
+              <Nav.Link as={Link} to="/settings" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-gear me-2"></i>Settings</Nav.Link>
+            </>
+          )}
+          <Nav.Link as={Link} to="/support" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-headset me-2"></i>Support</Nav.Link>
+          <Nav.Link as={Link} to="/about" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-info-circle me-2"></i>About Us</Nav.Link>
+          <Nav.Link as={Link} to="/contact" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-chat-dots me-2"></i>Contact Us</Nav.Link>
+          <Nav.Link as={Link} to="/privacy" onClick={onClose} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-shield-check me-2"></i>Privacy Policy</Nav.Link>
+          {!isAuthenticated && (
+            <>
+              <Nav.Link as={Link} to="/login" onClick={() => { navigate('/login'); onClose(); }} className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-box-arrow-in-right me-2"></i>Login</Nav.Link>
+              <Nav.Link as={Link} to="/register" onClick={() => { navigate('/register'); onClose(); }} className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}> <i className="bi bi-person-plus me-2"></i>Register</Nav.Link>
+            </>
+          )}
+          {user?.role === 'admin' && (
+            <Nav.Link as={Link} to="/admin/contacts" onClick={onClose} className={`${theme === 'dark' ? 'text-warning' : 'text-warning'} mb-2`}><i className="bi bi-inbox me-2"></i>Admin: Support Messages</Nav.Link>
+          )}
+        </Nav>
+        <div className="mb-3">
+          <Button 
+            variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} 
+            size="sm" 
+            onClick={() => { toggleTheme(); onClose(); }} 
+            className="w-100 mb-2"
+          >
+            <i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} me-2`}></i>
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </Button>
+        </div>
+        {isAuthenticated ? (
+          <div>
+            <div className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2 small`}>
+              Welcome, {user?.displayName}!
+            </div>
+            <Button variant={theme === 'dark' ? 'outline-light' : 'outline-dark'} size="sm" onClick={handleSidebarLogout} className="w-100">
+              <i className="bi bi-box-arrow-right me-2"></i>
+              Logout
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+};
 
 const AuthPage: React.FC = () => {
   const { theme } = useTheme();
@@ -23,30 +127,16 @@ const AuthPage: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Animation refs
-  const mainRef = useRef<HTMLDivElement>(null);
-  const aContainerRef = useRef<HTMLDivElement>(null);
-  const bContainerRef = useRef<HTMLDivElement>(null);
-  const switchCntRef = useRef<HTMLDivElement>(null);
-  const switchCircleRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-  const switchC1Ref = useRef<HTMLDivElement>(null);
-  const switchC2Ref = useRef<HTMLDivElement>(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Theme effect for body
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // Set isSignUp based on route
   useEffect(() => {
     setIsSignUp(location.pathname === '/register');
   }, [location.pathname]);
-
-  // Switch animation
-  const handleSwitch = () => {
-    setIsSignUp((prev) => !prev);
-  };
 
   // Login form handlers
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,9 +221,48 @@ const AuthPage: React.FC = () => {
       alignItems: 'center',
       backgroundColor: theme === 'dark' ? 'var(--auth-bg)' : 'var(--auth-neu-1)'
     }}>
-      <div className={`auth-main${theme === 'dark' ? ' dark' : ''}`} ref={mainRef}>
-        {/* Register Form */}
-        <div className={`container a-container${isSignUp ? ' is-txl' : ''}`} id="a-container" ref={aContainerRef}>
+      {/* Hamburger for mobile */}
+      {!mobileSidebarOpen && (
+        <button
+          className="hamburger-menu d-lg-none"
+          style={{
+            position: 'fixed',
+            top: 18,
+            left: 18,
+            zIndex: 2200,
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            margin: 0,
+            outline: 'none',
+            cursor: 'pointer',
+          }}
+          aria-label="Open navigation menu"
+          onClick={() => setMobileSidebarOpen(true)}
+        >
+          <i className="bi bi-list" style={{ fontSize: '2rem', color: 'var(--accent, #4dabf7)' }}></i>
+        </button>
+      )}
+      <MobileSidebar show={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} setIsSignUp={setIsSignUp} />
+      <div className={`auth-main${theme === 'dark' ? ' dark' : ''}`}> 
+        {!isSignUp ? (
+          <form className="form" onSubmit={handleLoginSubmit} autoComplete="off">
+            <h2 className="form_title title">Sign in to Website</h2>
+            <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }} onClick={handleGoogleLogin}>
+              {googleIcon}
+            </button>
+            <span className="form__span">or use your email account</span>
+            <input className="form__input" type="email" name="email" placeholder="Email" value={loginData.email} onChange={handleLoginChange} required />
+            <input className="form__input" type="password" name="password" placeholder="Password" value={loginData.password} onChange={handleLoginChange} required />
+            <a className="form__link" href="#" tabIndex={-1}>Forgot your password?</a>
+            {error && !isSignUp && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
+            <button className="form__button button submit" type="submit" disabled={loading}>{loading ? 'Signing in...' : 'SIGN IN'}</button>
+            <div className="w-100 text-center mt-3">
+              <span>Don't have an account? </span>
+              <button type="button" className="btn btn-link p-0" style={{ fontSize: 15 }} onClick={() => navigate('/register')}>Sign up</button>
+            </div>
+          </form>
+        ) : (
           <form className="form" onSubmit={handleRegisterSubmit} autoComplete="off">
             <h2 className="form_title title">Create Account</h2>
             <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }} onClick={handleGoogleLogin}>
@@ -147,38 +276,12 @@ const AuthPage: React.FC = () => {
             <input className="form__input" type="password" name="confirmPassword" placeholder="Confirm Password" value={registerData.confirmPassword} onChange={handleRegisterChange} required minLength={6} />
             {error && isSignUp && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
             <button className="form__button button submit" type="submit" disabled={loading}>{loading ? 'Signing up...' : 'SIGN UP'}</button>
+            <div className="w-100 text-center mt-3">
+              <span>Already have an account? </span>
+              <button type="button" className="btn btn-link p-0" style={{ fontSize: 15 }} onClick={() => navigate('/login')}>Sign in</button>
+            </div>
           </form>
-        </div>
-        {/* Login Form */}
-        <div className={`container b-container${isSignUp ? ' is-txl is-z200' : ''}`} id="b-container" ref={bContainerRef}>
-          <form className="form" onSubmit={handleLoginSubmit} autoComplete="off">
-            <h2 className="form_title title">Sign in to Website</h2>
-            <button type="button" className="form__button button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, width: 48, height: 48, padding: 0 }} onClick={handleGoogleLogin}>
-              {googleIcon}
-            </button>
-            <span className="form__span">or use your email account</span>
-            <input className="form__input" type="email" name="email" placeholder="Email" value={loginData.email} onChange={handleLoginChange} required />
-            <input className="form__input" type="password" name="password" placeholder="Password" value={loginData.password} onChange={handleLoginChange} required />
-            <a className="form__link" href="#" tabIndex={-1}>Forgot your password?</a>
-            {error && !isSignUp && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
-            <button className="form__button button submit" type="submit" disabled={loading}>{loading ? 'Signing in...' : 'SIGN IN'}</button>
-          </form>
-        </div>
-        {/* Switcher */}
-        <div className={`switch${isSignUp ? ' is-txr' : ''}`} id="switch-cnt" ref={switchCntRef}>
-          <div className="switch__circle" ref={switchCircleRefs[0]}></div>
-          <div className="switch__circle switch__circle--t" ref={switchCircleRefs[1]}></div>
-          <div className={`switch__container${!isSignUp ? '' : ' is-hidden'}`} id="switch-c1" ref={switchC1Ref}>
-            <h2 className="switch__title title">Welcome Back !</h2>
-            <p className="switch__description description">To keep connected with us please login with your personal info</p>
-            <button className="switch__button button switch-btn" onClick={handleSwitch} type="button">SIGN IN</button>
-          </div>
-          <div className={`switch__container${isSignUp ? '' : ' is-hidden'}`} id="switch-c2" ref={switchC2Ref}>
-            <h2 className="switch__title title">Hello Friend !</h2>
-            <p className="switch__description description">Enter your personal details and start journey with us</p>
-            <button className="switch__button button switch-btn" onClick={handleSwitch} type="button">SIGN UP</button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

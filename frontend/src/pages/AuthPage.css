@@ -297,9 +297,79 @@
   }
 }
 
-@media(max-width: 600px){  
-  .auth-page-container .auth-main{  
-    width: 300px;
-    min-width: 300px;
+@media (max-width: 600px) {
+  .auth-page-container {
+    padding: 0 !important;
+    min-width: 0 !important;
+  }
+  .auth-page-container .auth-main {
+    width: 100vw !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    padding: 10px !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    position: static !important;
+    overflow: visible !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .auth-page-container .container {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    padding: 0 0 24px 0 !important;
+    box-shadow: none !important;
+    background: none !important;
+    display: block !important;
+  }
+  .auth-page-container .form {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box;
+  }
+  .auth-page-container .form__input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    font-size: 15px !important;
+    padding-left: 12px !important;
+  }
+  .auth-page-container .button,
+  .auth-page-container .form__button,
+  .auth-page-container .switch__button {
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 16px !important;
+    margin-top: 24px !important;
+    height: 48px !important;
+    padding: 0 !important;
+  }
+  .auth-page-container .switch,
+  .auth-page-container .switch__circle,
+  .auth-page-container .switch__container {
+    display: none !important;
+  }
+  .auth-page-container .title {
+    font-size: 24px !important;
+    line-height: 1.3 !important;
+    margin-bottom: 12px !important;
+  }
+  .auth-page-container .form__span {
+    margin-top: 16px !important;
+    margin-bottom: 8px !important;
+  }
+  .auth-page-container .form__link {
+    font-size: 14px !important;
+    margin-top: 16px !important;
+  }
+  .auth-page-container .description {
+    font-size: 13px !important;
+    padding: 0 8px !important;
   }
 } 
