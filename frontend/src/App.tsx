@@ -72,6 +72,15 @@ const LeftSidebar: React.FC = () => {
         <Nav.Link as={Link} to="/about" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-info-circle me-2"></i>About Us</Nav.Link>
         <Nav.Link as={Link} to="/contact" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-chat-dots me-2"></i>Contact Us</Nav.Link>
         <Nav.Link as={Link} to="/privacy" className={`${theme === 'dark' ? 'text-white' : 'text-dark'} mb-2`}><i className="bi bi-shield-check me-2"></i>Privacy Policy</Nav.Link>
+        {user?.role === 'admin' && (
+          <Nav.Link
+            as={Link}
+            to="/admin/contacts"
+            className={`${theme === 'dark' ? 'text-warning' : 'text-warning'} mb-2`}
+          >
+            <i className="bi bi-inbox me-2"></i>Admin: Support Messages
+          </Nav.Link>
+        )}
       </Nav>
       <div className="mt-auto">
         <div className="mb-3">
