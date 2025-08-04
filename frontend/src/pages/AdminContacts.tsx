@@ -13,7 +13,7 @@ const AdminContacts: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
-  const [expandedTickets, setExpandedTickets] = useState<Set<string>>(new Set());
+  const [expandedTicketId, setExpandedTicketId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -39,13 +39,7 @@ const AdminContacts: React.FC = () => {
   };
 
   const toggleExpanded = (id: string) => {
-    const newExpanded = new Set(expandedTickets);
-    if (newExpanded.has(id)) {
-      newExpanded.delete(id);
-    } else {
-      newExpanded.add(id);
-    }
-    setExpandedTickets(newExpanded);
+    setExpandedTicketId(expandedTicketId === id ? null : id);
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -143,16 +137,14 @@ const AdminContacts: React.FC = () => {
       ) : (
         <Row className="g-3">
           {messages.map(msg => (
-            <Col key={msg._id} xs={12} lg={6}>
+            <Col key={msg._id} xs={12}>
               <Card 
                 className={`h-100 ${theme === 'dark' ? 'bg-dark text-white' : ''}`}
                 style={{
                   borderColor: theme === 'dark' ? 'var(--border)' : undefined,
                   backgroundColor: theme === 'dark' ? 'var(--bg-secondary)' : undefined,
                   transition: 'all 0.2s ease',
-                  cursor: 'pointer'
                 }}
-                onClick={() => toggleExpanded(msg._id)}
               >
                 <Card.Body className="p-3">
                   <div className="d-flex align-items-start justify-content-between mb-2">
@@ -196,82 +188,83 @@ const AdminContacts: React.FC = () => {
                       variant="link"
                       size="sm"
                       className={`p-0 ${theme === 'dark' ? 'text-light' : 'text-muted'}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleExpanded(msg._id);
-                      }}
+                      onClick={() => toggleExpanded(msg._id)}
+                      aria-controls={`collapse-${msg._id}`}
+                      aria-expanded={expandedTicketId === msg._id}
                     >
-                      <i className={`bi ${expandedTickets.has(msg._id) ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                      <i className={`bi ${expandedTicketId === msg._id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                     </Button>
                   </div>
 
-                  <Collapse in={expandedTickets.has(msg._id)}>
-                    <div className="mt-3 pt-3 border-top" style={{ borderColor: 'var(--border) !important' }}>
-                      <div className="mb-3">
-                        <h6 className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2`}>
-                          <i className="bi bi-envelope me-2"></i>
-                          Contact Information
-                        </h6>
-                        <div className="row">
-                          <div className="col-6">
-                            <small className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`}>Name</small>
-                            <p className={`mb-1 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>{msg.name}</p>
+                  <Collapse in={expandedTicketId === msg._id}>
+                    <div id={`collapse-${msg._id}`}>
+                      <div className="mt-3 pt-3 border-top" style={{ borderColor: 'var(--border) !important' }}>
+                        <div className="mb-3">
+                          <h6 className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2`}>
+                            <i className="bi bi-envelope me-2"></i>
+                            Contact Information
+                          </h6>
+                          <div className="row">
+                            <div className="col-6">
+                              <small className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`}>Name</small>
+                              <p className={`mb-1 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>{msg.name}</p>
+                            </div>
+                            <div className="col-6">
+                              <small className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`}>Email</small>
+                              <p className={`mb-1 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
+                                <a href={`mailto:${msg.email}`} className="text-decoration-none" style={{ color: 'var(--accent)' }}>
+                                  {msg.email}
+                                </a>
+                              </p>
+                            </div>
                           </div>
-                          <div className="col-6">
-                            <small className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`}>Email</small>
-                            <p className={`mb-1 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-                              <a href={`mailto:${msg.email}`} className="text-decoration-none" style={{ color: 'var(--accent)' }}>
-                                {msg.email}
-                              </a>
+                        </div>
+
+                        <div className="mb-3">
+                          <h6 className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2`}>
+                            <i className="bi bi-chat-text me-2"></i>
+                            Message
+                          </h6>
+                          <div 
+                            className="p-3 rounded"
+                            style={{
+                              backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : '#f8f9fa',
+                              border: `1px solid ${theme === 'dark' ? 'var(--border)' : '#dee2e6'}`
+                            }}
+                          >
+                            <p className={`mb-0 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
+                              {msg.message}
                             </p>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="mb-3">
-                        <h6 className={`${theme === 'dark' ? 'text-light' : 'text-muted'} mb-2`}>
-                          <i className="bi bi-chat-text me-2"></i>
-                          Message
-                        </h6>
-                        <div 
-                          className="p-3 rounded"
-                          style={{
-                            backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : '#f8f9fa',
-                            border: `1px solid ${theme === 'dark' ? 'var(--border)' : '#dee2e6'}`
-                          }}
-                        >
-                          <p className={`mb-0 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-                            {msg.message}
-                          </p>
+                        <div className="d-flex align-items-center justify-content-between">
+                          <div>
+                            <small className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`}>
+                              <i className="bi bi-clock me-1"></i>
+                              {new Date(msg.createdAt).toLocaleString()}
+                            </small>
+                          </div>
+                          <Form.Select
+                            value={msg.status || 'open'}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleStatusChange(msg._id, e.target.value);
+                            }}
+                            disabled={statusUpdating === msg._id}
+                            size="sm"
+                            style={{ 
+                              minWidth: 140,
+                              backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
+                              borderColor: theme === 'dark' ? 'var(--border)' : undefined,
+                              color: theme === 'dark' ? 'var(--text-primary)' : undefined
+                            }}
+                          >
+                            {statusOptions.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                          </Form.Select>
                         </div>
-                      </div>
-
-                      <div className="d-flex align-items-center justify-content-between">
-                        <div>
-                          <small className={`${theme === 'dark' ? 'text-light' : 'text-muted'}`}>
-                            <i className="bi bi-clock me-1"></i>
-                            {new Date(msg.createdAt).toLocaleString()}
-                          </small>
-                        </div>
-                        <Form.Select
-                          value={msg.status || 'open'}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            handleStatusChange(msg._id, e.target.value);
-                          }}
-                          disabled={statusUpdating === msg._id}
-                          size="sm"
-                          style={{ 
-                            minWidth: 140,
-                            backgroundColor: theme === 'dark' ? 'var(--bg-tertiary)' : undefined,
-                            borderColor: theme === 'dark' ? 'var(--border)' : undefined,
-                            color: theme === 'dark' ? 'var(--text-primary)' : undefined
-                          }}
-                        >
-                          {statusOptions.map(opt => (
-                            <option key={opt} value={opt}>{opt}</option>
-                          ))}
-                        </Form.Select>
                       </div>
                     </div>
                   </Collapse>
@@ -285,4 +278,4 @@ const AdminContacts: React.FC = () => {
   );
 };
 
-export default AdminContacts; 
+export default AdminContacts;
