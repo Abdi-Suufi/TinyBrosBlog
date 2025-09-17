@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 const PrivacyPolicy: React.FC = () => {
   const { theme } = useTheme();
 
-  const lastUpdated = 'December 2024';
+  const lastUpdated = 'Sept 2025';
 
   const sections = [
     {
