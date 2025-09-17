@@ -142,9 +142,16 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Google OAuth routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', { 
+  scope: ['profile', 'email'],
+  accessType: 'offline',
+  prompt: 'consent'
+}));
 
-router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/' }), async (req, res) => {
+router.get('/google/callback', passport.authenticate('google', { 
+  session: false, 
+  failureRedirect: 'https://tiny-bros-blog.vercel.app/login?error=auth_failed' 
+}), async (req, res) => {
   // Issue JWT and send user info
   const user = req.user;
   const token = jwt.sign(
@@ -153,7 +160,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
     { expiresIn: '7d' }
   );
   // Redirect to frontend with token and user info as query params
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000/login';
+  const frontendUrl = process.env.FRONTEND_URL || 'https://tiny-bros-blog.vercel.app/login';
   const userParam = encodeURIComponent(JSON.stringify({
     id: user._id,
     username: user.username,
