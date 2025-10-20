@@ -1,240 +1,99 @@
-# TinyBrosBlog Backend API
+## TinyBrosBlog — Full-Stack Social Blogging Platform
 
-A RESTful API for TinyBrosBlog - A food blog platform where users can share their dining experiences.
+A modern, full-stack social blogging application where users can share food experiences, follow other users, and engage with content through comments. Features a responsive React frontend with dark/light themes and a robust Express.js backend with MongoDB.
 
-## Features
+### Website Features
+- **Social Feed**: Browse posts from all users or filter to see only posts from users you follow
+- **User Profiles**: View user profiles, follow/unfollow users, and see their post history
+- **Post Creation**: Create rich posts with text content and image uploads
+- **Comments System**: Engage with posts through threaded comments
+- **Search & Discovery**: Search for users by username or display name with live previews
+- **Responsive Design**: Mobile-first design with collapsible sidebar navigation
+- **Theme Support**: Dark and light mode with smooth transitions
+- **User Management**: Registration, login, profile settings, and account management
+- **Support System**: Contact support and admin message management
+- **Real-time Features**: Live search results and dynamic content updates
 
-- User authentication (register, login, JWT)
-- Blog post management (CRUD operations)
-- Image uploads for posts and profile pictures
-- Like and comment system
-- User following system
-- User profiles and settings
-- Search functionality
+### Frontend Tech Stack
+- **Framework**: React 19 with TypeScript
+- **Routing**: React Router DOM v7
+- **UI Components**: React Bootstrap 2.10 with Bootstrap 5.3
+- **Icons**: Bootstrap Icons
+- **State Management**: React Context (AuthContext, ThemeContext)
+- **HTTP Client**: Axios for API communication
+- **Analytics**: Vercel Analytics integration
+- **Real-time**: Socket.io client for live updates
+- **Build Tool**: Create React App with TypeScript support
 
-## Setup
+### Backend Tech Stack
+- **Runtime/Framework**: Node.js, Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT (bearer tokens) with middleware-based route protection
+- **File Storage**: Amazon S3 integration (via SDK) through upload middleware
+- **Real-time**: Socket.io server for live features
+- **Tooling**: Standard Express routing, modular controllers and middleware
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+### Data Models (overview)
+- **User**: identity, credentials (hashed), profile fields, role; references to following/followers
+- **Post**: author reference, title/content, media URLs/keys, timestamps, comments
+- **SupportMessage**: user reference (optional), subject/content, status, timestamps
 
-2. Create a `.env` file in the backend directory:
-   ```
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/tinybrosblog
-   JWT_SECRET=your_secure_jwt_secret_here
-   ```
+### Request Flow
+1. Client sends requests to Express server
+2. Middleware stack handles CORS, JSON parsing, auth (where required), and file uploads
+3. Route handlers perform validation, call Mongoose models, and return JSON responses
+4. Media uploads are processed by `upload` middleware and stored (e.g., S3) with returned public URLs/keys
 
-3. Start the server:
-   ```bash
-   npm run dev
-   ```
+### API Surface (high-level)
+- `Auth` (`/api/auth`)
+  - `POST /register` — create account
+  - `POST /login` — obtain JWT
+  - `GET /me` — current user profile (auth required)
 
-## API Endpoints
+- `Users` (`/api/users`)
+  - `GET /:id` — fetch user profile
+  - `PATCH /:id` — update profile (auth required)
+  - `POST /:id/follow` — follow user (auth required)
+  - `DELETE /:id/follow` — unfollow user (auth required)
 
-### Authentication
+- `Posts` (`/api/posts`)
+  - `GET /` — list feed/posts
+  - `POST /` — create post (auth required; supports media upload)
+  - `GET /:id` — fetch post detail
+  - `PATCH /:id` — update own post (auth required)
+  - `DELETE /:id` — delete own post (auth required)
+  - `POST /:id/comments` — add comment (auth required)
 
-#### Register User
-- **POST** `/api/auth/register`
-- **Body:**
-  ```json
-  {
-    "username": "john_doe",
-    "email": "john@example.com",
-    "password": "password123",
-    "displayName": "John Doe"
-  }
-  ```
+- `Support` (`/api/support`)
+  - `POST /` — submit support message
+  - `GET /` — list messages (admin)
 
-#### Login User
-- **POST** `/api/auth/login`
-- **Body:**
-  ```json
-  {
-    "email": "john@example.com",
-    "password": "password123"
-  }
-  ```
+Note: Exact routes and shapes are defined in the `routes/` and `models/` directories and may include additional filters, query parameters, or fields.
 
-#### Get Current User
-- **GET** `/api/auth/me`
-- **Headers:** `Authorization: Bearer <token>`
+### Security & Operational Considerations
+- JWT validation on protected routes via `middleware/auth.js`
+- Input validation and permission checks at route level
+- Media uploads constrained by `middleware/upload.js` (size/type policy)
+- Environment-driven configuration for database and storage
 
-#### Google OAuth Login
+### Frontend-Backend Integration
+The React frontend communicates with the Express backend through RESTful APIs:
 
-#### Start Google Login
-- **GET** `/api/auth/google`
-- Redirects user to Google for authentication.
+- **Authentication Flow**: JWT tokens stored in localStorage, sent with API requests
+- **Real-time Updates**: Socket.io connection for live features and notifications
+- **File Uploads**: Direct S3 uploads with signed URLs for media content
+- **State Management**: React Context for global auth and theme state
+- **API Services**: Organized service layers in `frontend/src/services/` for clean separation
+- **Type Safety**: Shared TypeScript interfaces between frontend and backend
+- **Responsive Design**: Mobile-first approach with Bootstrap components
+- **Theme System**: CSS custom properties for consistent dark/light mode theming
 
-#### Google OAuth Callback
-- **GET** `/api/auth/google/callback`
-- On success, returns:
-  ```json
-  {
-    "token": "<jwt_token>",
-    "user": {
-      "id": "...",
-      "username": "...",
-      "email": "...",
-      "displayName": "...",
-      "profilePicture": "..."
-    }
-  }
-  ```
-- On failure, redirects to `/`.
+### Key User Flows
+1. **Registration/Login**: Users create accounts and authenticate via JWT
+2. **Content Creation**: Users create posts with text and image uploads
+3. **Social Interaction**: Follow users, comment on posts, like content
+4. **Discovery**: Search for users, browse feeds, explore content
+5. **Profile Management**: Update profiles, manage settings, view activity
+6. **Support**: Contact admins, manage support tickets
 
-### Posts
 
-#### Create Post
-- **POST** `/api/posts`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body:** `multipart/form-data`
-  - `title`: string (required)
-  - `body`: string (required)
-  - `image`: file (required)
-  - `rating`: number 1-5 (required)
-  - `restaurantName`: string (optional)
-  - `location`: string (optional)
-  - `tags`: string (comma-separated, optional)
-
-#### Get All Posts
-- **GET** `/api/posts?page=1&limit=10`
-
-#### Get Single Post
-- **GET** `/api/posts/:id`
-
-#### Get Posts by User
-- **GET** `/api/posts/user/:userId`
-
-#### Update Post
-- **PUT** `/api/posts/:id`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body:**
-  ```json
-  {
-    "title": "Updated Title",
-    "body": "Updated content",
-    "rating": 4,
-    "restaurantName": "Updated Restaurant",
-    "location": "Updated Location",
-    "tags": "pizza, italian, dinner"
-  }
-  ```
-
-#### Delete Post
-- **DELETE** `/api/posts/:id`
-- **Headers:** `Authorization: Bearer <token>`
-
-#### Like/Unlike Post
-- **PUT** `/api/posts/:id/like`
-- **Headers:** `Authorization: Bearer <token>`
-
-#### Add Comment
-- **POST** `/api/posts/:id/comments`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body:**
-  ```json
-  {
-    "text": "Great post! The food looks amazing."
-  }
-  ```
-
-#### Remove Comment
-- **DELETE** `/api/posts/:id/comments/:commentId`
-- **Headers:** `Authorization: Bearer <token>`
-
-### Users
-
-#### Get User Profile
-- **GET** `/api/users/:id`
-
-#### Update Profile
-- **PUT** `/api/users/profile`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body:** `multipart/form-data`
-  - `displayName`: string (optional)
-  - `bio`: string (optional)
-  - `profilePicture`: file (optional)
-
-#### Follow/Unfollow User
-- **PUT** `/api/users/:id/follow`
-- **Headers:** `Authorization: Bearer <token>`
-
-#### Get User's Posts
-- **GET** `/api/users/:id/posts?page=1&limit=10`
-
-#### Get User's Feed (Posts from followed users)
-- **GET** `/api/users/feed?page=1&limit=10`
-- **Headers:** `Authorization: Bearer <token>`
-
-#### Search Users
-- **GET** `/api/users/search/:query`
-
-## Data Models
-
-### User
-```javascript
-{
-  _id: ObjectId,
-  username: String,
-  email: String,
-  password: String (hashed),
-  displayName: String,
-  profilePicture: String,
-  bio: String,
-  followers: [ObjectId],
-  following: [ObjectId],
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-### Post
-```javascript
-{
-  _id: ObjectId,
-  author: ObjectId (ref: User),
-  title: String,
-  body: String,
-  image: String,
-  rating: Number (1-5),
-  restaurantName: String,
-  location: String,
-  likes: [ObjectId (ref: User)],
-  comments: [{
-    user: ObjectId (ref: User),
-    text: String,
-    createdAt: Date
-  }],
-  tags: [String],
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-## Error Responses
-
-All endpoints return error responses in the following format:
-```json
-{
-  "message": "Error description"
-}
-```
-
-Common HTTP status codes:
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request
-- `401` - Unauthorized
-- `404` - Not Found
-- `500` - Server Error
-
-## Authentication
-
-Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:
-```
-Authorization: Bearer <your_jwt_token>
-```
-
-Tokens are returned upon successful login/registration and expire after 7 days. 
