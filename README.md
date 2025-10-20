@@ -1,5 +1,5 @@
-## TinyBrosBlog — Full-Stack Social Blogging Platform
-
+## TinyBrosBlog - Full-Stack Social Blogging Platform
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/20d2da47-e645-484f-87d0-ccaff31c0fa4" />
 A modern, full-stack social blogging application where users can share food experiences, follow other users, and engage with content through comments. Features a responsive React frontend with dark/light themes and a robust Express.js backend with MongoDB.
 
 ### Website Features
@@ -46,27 +46,27 @@ A modern, full-stack social blogging application where users can share food expe
 
 ### API Surface (high-level)
 - `Auth` (`/api/auth`)
-  - `POST /register` — create account
-  - `POST /login` — obtain JWT
-  - `GET /me` — current user profile (auth required)
+  - `POST /register` - create account
+  - `POST /login` - obtain JWT
+  - `GET /me` - current user profile (auth required)
 
 - `Users` (`/api/users`)
-  - `GET /:id` — fetch user profile
-  - `PATCH /:id` — update profile (auth required)
-  - `POST /:id/follow` — follow user (auth required)
-  - `DELETE /:id/follow` — unfollow user (auth required)
+  - `GET /:id` - fetch user profile
+  - `PATCH /:id` - update profile (auth required)
+  - `POST /:id/follow` - follow user (auth required)
+  - `DELETE /:id/follow` - unfollow user (auth required)
 
 - `Posts` (`/api/posts`)
-  - `GET /` — list feed/posts
-  - `POST /` — create post (auth required; supports media upload)
-  - `GET /:id` — fetch post detail
-  - `PATCH /:id` — update own post (auth required)
-  - `DELETE /:id` — delete own post (auth required)
-  - `POST /:id/comments` — add comment (auth required)
+  - `GET /` - list feed/posts
+  - `POST /` - create post (auth required; supports media upload)
+  - `GET /:id` - fetch post detail
+  - `PATCH /:id` - update own post (auth required)
+  - `DELETE /:id` - delete own post (auth required)
+  - `POST /:id/comments` - add comment (auth required)
 
 - `Support` (`/api/support`)
-  - `POST /` — submit support message
-  - `GET /` — list messages (admin)
+  - `POST /` - submit support message
+  - `GET /` - list messages (admin)
 
 Note: Exact routes and shapes are defined in the `routes/` and `models/` directories and may include additional filters, query parameters, or fields.
 
