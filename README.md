@@ -1,5 +1,5 @@
 ## TinyBrosBlog - Full-Stack Social Blogging Platform
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/20d2da47-e645-484f-87d0-ccaff31c0fa4" />
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/64af6a05-48fd-4c5e-81cf-c635e8b9a8bb" />
 A modern, full-stack social blogging application where users can share food experiences, follow other users, and engage with content through comments. Features a responsive React frontend with dark/light themes and a robust Express.js backend with MongoDB.
 
 ### Website Features
